@@ -1,6 +1,7 @@
 //
 //  Int.swift
-//  
+//  RKUtils
+//
 //
 //  Created by Rakibur Khan on 2/4/24.
 //
@@ -19,7 +20,7 @@ public extension Int {
      
      - Returns: A configured `NumberFormatter`.
     */
-    private static func numberFormatter( numberStyle: NumberFormatter.Style? = nil, groupSize: Int? = nil, groupSeparator: Bool? = nil, locale: Locale = .current) -> NumberFormatter {
+    private func numberFormatter( numberStyle: NumberFormatter.Style? = nil, groupSize: Int? = nil, groupSeparator: Bool? = nil, locale: Locale = .current) -> NumberFormatter {
         let formatter = NumberFormatter()
         formatter.maximumFractionDigits = 0
         formatter.locale = locale
@@ -39,6 +40,16 @@ public extension Int {
         return formatter
     }
     
+    private func dateComponentsFormatter(units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> DateComponentsFormatter {
+        let formatter = DateComponentsFormatter()
+        
+        formatter.allowedUnits = units
+        formatter.unitsStyle = style
+        formatter.formattingContext = context
+        
+        return formatter
+    }
+    
     /**
      Formats the integer using a localized decimal format.
      
@@ -48,7 +59,7 @@ public extension Int {
      - Returns: A localized string representation of the number.
     */
     func toLocal(locale: Locale = .current) -> String {
-        let formatter = Self.numberFormatter(numberStyle: .decimal, locale: locale)
+        let formatter = numberFormatter(numberStyle: .decimal, locale: locale)
         return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
     
@@ -66,7 +77,7 @@ public extension Int {
      - Returns: A formatted string representing the rounded number with optional suffix.
      */
     func toPositiveSuffix(interval: Int, suffix: String = "+", groupSeparator: Bool = false, locale: Locale = .current) -> String {
-        let formatter = Self.numberFormatter(numberStyle: .decimal, groupSeparator: groupSeparator, locale: locale)
+        let formatter = numberFormatter(numberStyle: .decimal, groupSeparator: groupSeparator, locale: locale)
         guard self >= 0, interval > 0 else {
             return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
         }
@@ -91,11 +102,8 @@ public extension Int {
      
      - Returns: An array of strings representing each digit.
     */
-     func digitNames(locale: Locale = .current, fallbackToEnglish: Bool = true) -> [String] {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .spellOut
-        formatter.maximumFractionDigits = 0
-        formatter.locale = locale
+    func digitNames(locale: Locale = .current, fallbackToEnglish: Bool = true) -> [String] {
+        let formatter = numberFormatter(numberStyle: .spellOut, locale: locale)
         
         let digits: [String] = String(self).compactMap { char -> String? in
             guard let digit = Int(String(char)) else { return nil }
@@ -116,7 +124,7 @@ public extension Int {
      - Returns: A string with the number written in words.
      */
     func inWords(locale: Locale = .current) -> String {
-        let formatter = Self.numberFormatter(numberStyle: .spellOut, locale: locale)
+        let formatter = numberFormatter(numberStyle: .spellOut, locale: locale)
         return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
     
@@ -147,8 +155,9 @@ public extension Int {
     - Parameters:
         - action: A closure that takes the current iteration index.
     */
-     func times(_ action: (Int) -> Void) {
+    func times(_ action: (Int) -> Void) {
         guard self > 0 else { return }
+        
         for i in 0..<self {
             action(i)
         }
@@ -192,7 +201,7 @@ public extension Int {
      
      - Returns: An abbreviated string with suffix (K, M, B).
     */
-     func abbreviated(locale: Locale = .current) -> String {
+    func abbreviated(locale: Locale = .current) -> String {
         let num = Double(self)
         let thousand = 1_000.0
         let million = 1_000_000.0
@@ -215,6 +224,28 @@ public extension Int {
     }
 }
 
+public extension Int {
+    func day(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+        let components = DateComponents(day: self)
+        let formatter = dateComponentsFormatter(units: [.day], style: style, context: context)
+        
+        return formatter.string(from: components) ?? self.toLocal()
+    }
+    
+    func month(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+        let components = DateComponents(month: self)
+        let formatter = dateComponentsFormatter(units: [.month], style: style, context: context)
+        
+        return formatter.string(from: components) ?? self.toLocal()
+    }
+    
+    func year(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+        let components = DateComponents(year: self)
+        let formatter = dateComponentsFormatter(units: [.year], style: style, context: context)
+        
+        return formatter.string(from: components) ?? self.toLocal()
+    }
+}
 
 public extension Int {
     /// Converts seconds into a (minutes, seconds) tuple.

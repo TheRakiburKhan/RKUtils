@@ -1,6 +1,7 @@
 //
 //  Bundle.swift
-//  
+//  RKUtils
+//
 //
 //  Created by Rakibur Khan on 2/4/24.
 //
@@ -17,7 +18,7 @@ public extension Bundle {
     }
     
     var releaseVersionNumberPretty: String {
-        return "v\(releaseVersionNumber ?? "1.0.0")"
+        return "v\(releaseVersionNumber ?? "0.0.0")"
     }
     
     var bundleDisplayName: String {

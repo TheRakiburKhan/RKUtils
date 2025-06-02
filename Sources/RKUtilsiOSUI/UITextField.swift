@@ -8,7 +8,9 @@
 import UIKit
 import Combine
 
+@MainActor
 fileprivate var secureTextState: Bool?
+@MainActor
 fileprivate var systemTint: UIColor?
 
 public extension UITextField {
