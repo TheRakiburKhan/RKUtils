@@ -5,6 +5,7 @@
 //  Created by Rakibur Khan on 3/4/24.
 //
 
+#if canImport(UIKit)
 import UIKit
 import Combine
 
@@ -85,3 +86,4 @@ public extension UITextField {
         self.rightViewMode = .always
     }
 }
+#endif

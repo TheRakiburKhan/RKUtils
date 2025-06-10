@@ -5,6 +5,7 @@
 //  Created by Rakibur Khan on 2/4/24.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UICollectionView {
@@ -59,3 +60,4 @@ public extension UICollectionView {
         return cell as? T
     }
 }
+#endif

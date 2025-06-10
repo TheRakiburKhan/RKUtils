@@ -5,6 +5,7 @@
 //  Created by Rakibur Khan on 2/4/24.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UIStoryboard {
@@ -18,3 +19,4 @@ public extension UIStoryboard {
     }
 }
 
+#endif

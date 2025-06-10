@@ -16,9 +16,13 @@ public extension String {
         return formatter.date(from: self)
     }
     
-    func toDate(stringFormat format: String = "yyyy-MM-dd HH:mm:ss") -> Date? {
+    func toDate(stringFormat format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone? = nil) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = format
+        
+        if let timeZone = timeZone {
+            formatter.timeZone = timeZone
+        }
         
         return formatter.date(from: self)
     }

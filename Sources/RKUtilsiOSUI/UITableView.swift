@@ -5,6 +5,7 @@
 //  Created by Rakibur Khan on 2/4/24.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UITableView {
@@ -60,3 +61,4 @@ public extension UITableView {
         }
     }
 }
+#endif

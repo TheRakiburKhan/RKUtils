@@ -260,6 +260,15 @@ public extension Double {
         
         return newRange.lowerBound + ratio * (newRange.upperBound - newRange.lowerBound)
     }
+    
+    /**
+     Converts UNIX time to `Date`
+     
+     - Returns: `Optional<Date>` aka `Date?`
+     */
+    func toDate() -> Date? {
+        return Date(timeIntervalSince1970: TimeInterval(self))
+    }
 }
 
 // MARK: Computed Properties

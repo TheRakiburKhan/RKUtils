@@ -34,22 +34,26 @@ public extension Date {
         return read
     }
     
-    func toString(format: String = "yyyy-MM-dd HH:mm:ss")-> String {
+    func toString(format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone? = nil)-> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
+        
+        if let timeZone = timeZone {
+            dateFormatter.timeZone = timeZone
+        }
         
         let date = dateFormatter.string(from: self)
         
         return date
     }
     
-    func relativeTime(to date: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated) -> String {
+    func relativeTime(to referanceDate: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.formattingContext = context
         formatter.dateTimeStyle = style
         formatter.unitsStyle = unitStyle
         
-        return formatter.localizedString(for: date, relativeTo: self)
+        return formatter.localizedString(for: self, relativeTo: referanceDate)
     }
     
     func distanceOf(_ unit: Calendar.Component, till referanceDate: Date) -> Int {

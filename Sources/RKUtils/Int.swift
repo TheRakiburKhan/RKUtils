@@ -51,6 +51,22 @@ public extension Int {
     }
     
     /**
+     Converts the Double to a percentage string (e.g., "25%").
+     
+     - Parameters:
+     - minFraction: Minimum number of fraction digits.
+     - maxFraction: Maximum number of fraction digits.
+     - groupSize: Optional grouping size for separator.
+     
+     - Returns: A percentage-formatted string.
+     */
+    func percentage(minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+        let value = self / 100
+        let formatter = numberFormatter(numberStyle: .percent, groupSize: groupSize)
+        return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.2f%%", value * 100)
+    }
+    
+    /**
      Formats the integer using a localized decimal format.
      
      - Parameters:
@@ -244,6 +260,15 @@ public extension Int {
         let formatter = dateComponentsFormatter(units: [.year], style: style, context: context)
         
         return formatter.string(from: components) ?? self.toLocal()
+    }
+    
+    /**
+     Converts UNIX time to `Date`
+     
+    - Returns: `Optional<Date>` aka `Date?`
+     */
+    func toDate() -> Date? {
+       return Date(timeIntervalSince1970: TimeInterval(self))
     }
 }
 

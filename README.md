@@ -1,8 +1,6 @@
 # RKUtils
 
-**RKUtils** is a lightweight, reusable Swift package offering a collection of productivity-focused extensions and helpers for UIKit and Foundation. Built for iOS developers who value clean code and efficiency.
-
----
+## **RKUtils** is a lightweight, reusable Swift package offering a collection of productivity-focused extensions and helpers for UIKit and Foundation. Built for iOS developers who value clean code and efficiency.
 
 ## 🚀 Features
 

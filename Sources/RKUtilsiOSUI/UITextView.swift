@@ -5,6 +5,7 @@
 //  Created by Rakibur Khan on 3/4/24.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UITextView {
@@ -19,3 +20,4 @@ public extension UITextView {
         self.inputAccessoryView = keyboardToolbar
     }
 }
+#endif

@@ -5,7 +5,7 @@
 //  Created by Rakibur Khan on 2/4/24.
 //
 
-import UIKit
+import CoreFoundation
 
 public extension CGRect {
     var minEdge: CGFloat {
