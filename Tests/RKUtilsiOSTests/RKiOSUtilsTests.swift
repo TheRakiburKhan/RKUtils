@@ -1,5 +1,5 @@
 import XCTest
-@testable import RKiOSUtils
+@testable import RKUtilsiOSUI
 
 final class RKiOSUtilsTests: XCTestCase {
     func testExample() throws {

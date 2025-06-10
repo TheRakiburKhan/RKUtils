@@ -7,7 +7,7 @@
 
 
 import XCTest
-@testable import RKiOSUtils
+@testable import RKUtils
 
 final class IntExtensionsTests: XCTestCase {
 
