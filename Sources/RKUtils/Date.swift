@@ -10,43 +10,73 @@ import Foundation
 
 public extension Date {
     /**
-     Converts ``Date`` to Human readable string format. Default format is "*01 Jan 1970 12:00 AM*"
+    Converts the date to a human-readable string using a localized template.
+     
+     - Parameters:
+        - timeZone: The time zone to use. Defaults to the current time zone.
+        - locale: The locale to use. Defaults to the current locale.
+        - localizedDateFormatFromTemplate: The localized template to use (e.g. "MMMdy").
+     
+     - Returns: A formatted date string.
      */
-    func readableString(timeZone: TimeZone? = TimeZone.current, locale: Locale = Locale.current, localizedDateFormatFromTemplate: String)-> String {
+    func readableString(timeZone: TimeZone? = TimeZone.current, locale: Locale = Locale.current, localizedDateFormatFromTemplate: String) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = timeZone
         formatter.locale = locale
         formatter.setLocalizedDateFormatFromTemplate(localizedDateFormatFromTemplate)
         
-        let read = formatter.string(from: self)
-        
-        return read
+        return formatter.string(from: self)
     }
     
-    func readableString(timeZone: TimeZone? = TimeZone.current, locale: Locale = Locale.current, format: String)-> String {
+    /**
+    Converts the date to a human-readable string using a custom date format.
+     
+     - Parameters:
+        - timeZone: The time zone to use. Defaults to the current time zone.
+        - locale: The locale to use. Defaults to the current locale.
+        - format: The custom format string (e.g. "dd-MM-yyyy HH:mm").
+     
+     - Returns: A formatted date string.
+     */
+    func readableString(timeZone: TimeZone? = TimeZone.current, locale: Locale = Locale.current, format: String) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = timeZone
         formatter.locale = locale
         formatter.dateFormat = format
         
-        let read = formatter.string(from: self)
-        
-        return read
+        return formatter.string(from: self)
     }
     
-    func toString(format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone? = nil)-> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = format
-        
+    /**
+    Formats the date to a string using a default or custom format.
+     
+     - Parameters:
+        - format: The format string. Defaults to `"yyyy-MM-dd HH:mm:ss"`.
+        - timeZone: Optional time zone to apply.
+     
+     - Returns: The formatted date string.
+     */
+    func toString(format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone? = nil) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
         if let timeZone = timeZone {
-            dateFormatter.timeZone = timeZone
+            formatter.timeZone = timeZone
         }
         
-        let date = dateFormatter.string(from: self)
-        
-        return date
+        return formatter.string(from: self)
     }
     
+    /**
+     Returns a human-readable relative time string (e.g. "2d ago", "in 3h").
+     
+     - Parameters:
+        - referanceDate: The reference date to compare to. Defaults to now.
+        - context: The formatting context (e.g. `.listItem`, `.standalone`).
+        - style: The date-time style (e.g. `.numeric`, `.named`).
+        - unitStyle: The style of the units (e.g. `.abbreviated`, `.full`).
+     
+     - Returns: A localized relative time string.
+     */
     func relativeTime(to referanceDate: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.formattingContext = context
@@ -56,6 +86,15 @@ public extension Date {
         return formatter.localizedString(for: self, relativeTo: referanceDate)
     }
     
+    /**
+     Returns the distance between `self` and `referanceDate` in the specified calendar component.
+     
+     - Parameters:
+        - unit: The calendar component to measure.
+        - referanceDate: The date to count toward.
+     
+     - Returns: The difference in the specified unit.
+     */
     func distanceOf(_ unit: Calendar.Component, till referanceDate: Date) -> Int {
         let calendar = Calendar.current
         let components = calendar.dateComponents([unit], from: self, to: referanceDate)
@@ -63,31 +102,62 @@ public extension Date {
         return components.value(for: unit) ?? 0
     }
     
-    func distanceOf(_ unit: Calendar.Component, from referanceDate: Date) -> Int {
+    /**
+     Returns the distance between `referanceDate` and `self` in the specified calendar component.
+     
+     - Parameters:
+        - unit: The calendar component to measure.
+        - referanceDate: The date to count from.
+     
+     - Returns: The difference in the specified unit.
+     */
+     func distanceOf(_ unit: Calendar.Component, from referanceDate: Date) -> Int {
         let calendar = Calendar.current
         let components = calendar.dateComponents([unit], from: referanceDate, to: self)
         
         return components.value(for: unit) ?? 0
     }
     
+    /**
+     Returns a date after adding a specified value and calendar component to `self`.
+     
+     - Parameters:
+        - count: The amount to add.
+        - unit: The calendar component to add.
+     
+     - Returns: The resulting future date.
+     */
     func dateAfter(_ count: Int, _ unit: Calendar.Component) -> Date? {
         var calendar = Calendar.current
         calendar.timeZone = .current
         
-        let date = calendar.date(byAdding: unit, value: count, to: self)
-        
-        return date
+        return calendar.date(byAdding: unit, value: count, to: self)
     }
     
+    /**
+     Returns a date before subtracting a specified value and calendar component from `self`.
+     
+     - Parameters:
+        - count: The amount to subtract.
+        - unit: The calendar component to subtract.
+     
+     - Returns: The resulting past date.
+     */
     func dateBefore(_ count: Int, _ unit: Calendar.Component) -> Date? {
         var calendar = Calendar.current
         calendar.timeZone = .current
         
-        let date = calendar.date(byAdding: unit, value: (count * (-1)), to: self)
-        
-        return date
+        return calendar.date(byAdding: unit, value: -count, to: self)
     }
     
+    /**
+     Returns an array of dates for the current week starting from the first day of the week.
+     
+     - Parameters:
+        - calendar: The calendar to use. Defaults to `.current`.
+     
+     - Returns: An array of 7 dates representing the current week.
+     */
     func datesOfCurrentWeek(using calendar: Calendar = .current) -> [Date] {
         let currentWeekday = calendar.component(.weekday, from: self)
         let firstWeekdayIndex = calendar.firstWeekday
@@ -108,17 +178,26 @@ public extension Date {
 }
 
 extension Date {
-    func isInToday() -> Bool {
+    /**
+     Returns true if the date is today (ignores time).
+     
+     - Returns: `true` if the date is today.
+    */
+     func isInToday() -> Bool {
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let selfDate = calendar.startOfDay(for: self)
         
-        return today == selfDate
+         return calendar.isDateInToday(self)
     }
     
-    func monthName() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM"
-        return dateFormatter.string(from: self)
+    /**
+     Returns the full name of the month of the date.
+     
+     - Returns: A string representing the month (e.g. **January**).
+     */
+     func monthName() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM"
+        
+         return formatter.string(from: self)
     }
 }
