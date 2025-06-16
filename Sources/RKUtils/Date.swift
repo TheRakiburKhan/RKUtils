@@ -83,7 +83,7 @@ public extension Date {
         var calendar = Calendar.current
         calendar.timeZone = .current
         
-        let date = calendar.date(byAdding: unit, value: count, to: self)
+        let date = calendar.date(byAdding: unit, value: (count * (-1)), to: self)
         
         return date
     }
