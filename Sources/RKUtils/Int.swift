@@ -82,7 +82,7 @@ public extension Int {
     /**
      Rounds the number down to a multiple of `interval` and adds a suffix if there is a remainder.
      
-     For example, `92.toPositiveSuffix(interval: 10)` results in `"90+"`.
+     For example, `92.intervalDescription(interval: 10)` results in `"90+"`.
      
      - Parameters:
         - interval: The interval to round down to.
@@ -92,16 +92,27 @@ public extension Int {
      
      - Returns: A formatted string representing the rounded number with optional suffix.
      */
-    func toPositiveSuffix(interval: Int, suffix: String = "+", groupSeparator: Bool = false, locale: Locale = .current) -> String {
+    func intervalDescription(interval: Int, suffix: String = "+", groupSeparator: Bool = false, locale: Locale = .current) -> String {
         let formatter = numberFormatter(numberStyle: .decimal, groupSeparator: groupSeparator, locale: locale)
-        guard self >= 0, interval > 0 else {
+        
+        let absoluteInterval = abs(interval)
+        let absSelf = abs(self)
+        
+        guard absoluteInterval > 0 else {
             return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
         }
         
-        let remainder = self % interval
-        let rounded = self - remainder
-        if remainder > 0 {
-            formatter.positiveSuffix = suffix
+        var rounded: Int = 0
+        
+        if absSelf < absoluteInterval {
+            rounded = self
+        } else {
+            let remainder = absSelf % absoluteInterval
+            rounded = absSelf - remainder
+            
+            if remainder > 0 {
+                formatter.positiveSuffix = suffix
+            }
         }
         
         return formatter.string(from: NSNumber(value: rounded)) ?? "\(self)"
@@ -299,4 +310,25 @@ public extension Int {
     
     /// Returns `true` if the number is greater than 0.
     var isPositive: Bool { self > 0 }
+}
+
+// MARK: - Renamed and will be removed in future
+public extension Int {
+    /**
+     Rounds the number down to a multiple of `interval` and adds a suffix if there is a remainder.
+     
+     For example, `92.toPositiveSuffix(interval: 10)` results in `"90+"`.
+     
+     - Parameters:
+     - interval: The interval to round down to.
+     - suffix: The suffix to append when the number is not a perfect multiple (default is `"+"`).
+     - groupSeparator: Whether to use digit group separators (e.g., "1,000").
+     - locale: The locale to use for formatting.
+     
+     - Returns: A formatted string representing the rounded number with optional suffix.
+     */
+    @available(*, deprecated, renamed: "intervalDescription(interval:suffix:groupSeparator:locale:)")
+    func toPositiveSuffix(interval: Int, suffix: String = "+", groupSeparator: Bool = false, locale: Locale = .current) -> String {
+       return intervalDescription(interval: interval, suffix: suffix, groupSeparator: groupSeparator, locale: locale)
+    }
 }
