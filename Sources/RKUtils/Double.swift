@@ -56,15 +56,18 @@ public extension Double {
         return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.2f%%", value * 100)
     }
     
-    /// Converts the Double to a localized currency string.
-    ///
-    /// - Parameters:
-    ///   - code: ISO 4217 currency code (e.g., "USD").
-    ///   - symbol: Optional override for currency symbol (e.g., "$").
-    ///   - minFraction: Minimum fraction digits.
-    ///   - maxFraction: Maximum fraction digits.
-    ///   - groupSize: Optional grouping size.
-    /// - Returns: A formatted currency string.
+    /**
+     Converts the Double to a localized currency string.
+     
+     - Parameters:
+        - code: ISO 4217 currency code (e.g., "USD").
+        - symbol: Optional override for currency symbol (e.g., "$").
+        - minFraction: Minimum fraction digits.
+        - maxFraction: Maximum fraction digits.
+        - groupSize: Optional grouping size.
+     
+     - Returns: A formatted currency string.
+     */
     func currency(code: String, symbol: String? = nil, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         let formatter = numberFormatter(minFraction: minFraction, maxFraction: maxFraction, numberStyle: .currency, groupSize: groupSize)
         formatter.currencyCode = code
@@ -73,22 +76,29 @@ public extension Double {
         "\(toLocal(minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)) \(symbol ?? code)"
     }
     
-    /// Converts the Double to a written-out word string using `NumberFormatter.Style.spellOut`.
-    ///
-    /// - Parameter locale: Locale for language formatting (default is `.current`).
-    /// - Returns: Written words for the number, or fallback if unsupported.
+    /**
+     Converts the Double to a written-out word string using `NumberFormatter.Style.spellOut`.
+     
+     - Parameters:
+        - locale: Locale for language formatting (default is `.current`).
+     
+     - Returns: Written words for the number, or fallback if unsupported.
+     */
     func inWords(locale: Locale = .current) -> String {
         let formatter = numberFormatter(locale: locale, numberStyle: .spellOut)
         let result = formatter.string(from: NSNumber(value: self))
         return result == "\(self)" ? String(format: "%.2f", self) : result ?? "\(self)"
     }
     
-    /// Rounds the number down to the nearest multiple of interval, appending "+" if it had a remainder.
-    ///
-    /// - Parameters:
-    ///   - interval: The step size (e.g., 1000 will round 1250 to "1000+").
-    ///   - groupSeparator: Whether to use thousand separators.
-    /// - Returns: A suffix-formatted string with optional "+" sign.
+    /**
+     Rounds the number down to the nearest multiple of interval, appending "+" if it had a remainder.
+     
+     - Parameters:
+        - interval: The step size (e.g., 1000 will round 1250 to "1000+").
+        - groupSeparator: Whether to use thousand separators.
+     
+     - Returns: A suffix-formatted string with optional "+" sign.
+     */
     func toPositiveSuffix(interval: Int, groupSeparator: Bool = false) -> String {
         let formatter = numberFormatter(numberStyle: .decimal, groupSeparator: groupSeparator)
         guard self >= 0, let divisor = Double(exactly: interval) else {
@@ -105,9 +115,11 @@ public extension Double {
         return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
     
-    /// Converts the Double into abbreviated string (e.g., 1.2K, 5.6M).
-    ///
-    /// - Returns: A shortened string representation with suffixes.
+    /**
+     Converts the Double into abbreviated string (e.g., 1.2K, 5.6M).
+     
+     - Returns: A shortened string representation with suffixes.
+     */
     func abbreviated() -> String {
         let absValue = abs(self)
         let sign = self < 0 ? "-" : ""
@@ -127,90 +139,112 @@ public extension Double {
 
 // MARK: Measurement Formatting
 public extension Double {
-    /// Formats a Double as a distance value (e.g., meters, kilometers).
-    ///
-    /// - Parameters:
-    ///   - unitStyle: Display style (e.g., .short, .medium).
-    ///   - baseUnit: Unit of measurement (default is meters).
-    ///   - minFraction: Minimum fraction digits.
-    ///   - maxFraction: Maximum fraction digits.
-    ///   - groupSize: Optional grouping size.
-    /// - Returns: A localized distance string.
-    func distance(unitStyle: Formatter.UnitStyle = .medium, baseUnit: UnitLength = .meters, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+    /**
+     Formats a Double as a distance value (e.g., meters, kilometers).
+     
+     - Parameters:
+        - baseUnit: Unit of measurement (default is meters).
+        - unitStyle: Display style (e.g., .short, .medium).
+        - minFraction: Minimum fraction digits.
+        - maxFraction: Maximum fraction digits.
+        - groupSize: Optional grouping size.
+     
+     - Returns: A localized distance string.
+     */
+    func distance(baseUnit: UnitLength = .meters, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
     
-    /// Formats the Double as a duration (e.g., minutes, hours).
-    ///
-    /// - Parameters:
-    ///   - unitStyle: Formatter style.
-    ///   - baseUnit: Duration unit (default is `.minutes`).
-    ///   - minFraction: Minimum fraction digits.
-    ///   - maxFraction: Maximum fraction digits.
-    ///   - groupSize: Optional grouping size.
-    /// - Returns: A formatted duration string.
-    func time(unitStyle: Formatter.UnitStyle = .medium, baseUnit: UnitDuration = .minutes, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+    /**
+     Formats the Double as a duration (e.g., minutes, hours).
+     
+     - Parameters:
+        - baseUnit: Duration unit (default is `.minutes`).
+        - unitStyle: Formatter style.
+        - minFraction: Minimum fraction digits.
+        - maxFraction: Maximum fraction digits.
+        - groupSize: Optional grouping size.
+     
+     - Returns: A formatted duration string.
+     */
+    func time(baseUnit: UnitDuration = .minutes, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
     
-    /// Formats the Double as a temperature value in Kelvin.
-    ///
-    /// - Parameters:
-    ///   - unitStyle: Display style.
-    ///   - minFraction: Minimum fraction digits.
-    ///   - maxFraction: Maximum fraction digits.
-    ///   - groupSize: Optional grouping size.
-    /// - Returns: A temperature-formatted string.
-    func temperature(unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
-        return measurementString(unit: UnitTemperature.kelvin, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
+    /**
+     Formats the Double as a temperature value in Kelvin.
+     
+     - Parameters:
+        - baseUnit: Temperature Unit (default is `.kelvin`).
+        - unitStyle: Display style.
+        - minFraction: Minimum fraction digits.
+        - maxFraction: Maximum fraction digits.
+        - groupSize: Optional grouping size.
+     
+     - Returns: A temperature-formatted string.
+     */
+    func temperature(baseUnit: UnitTemperature = .kelvin, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+        return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
 }
 
 // MARK: Time Components
 public extension Double {
-    /// Converts seconds into a readable time format (e.g., "1h 3m").
-    ///
-    /// - Parameters:
-    ///   - units: Allowed time components.
-    ///   - style: Output format style.
-    ///   - context: Formatting context.
-    /// - Returns: A time-formatted string.
+    /**
+     Converts seconds into a readable time format (e.g., "1h 3m").
+     
+     - Parameters:
+        - units: Allowed time components.
+        - style: Output format style.
+        - context: Formatting context.
+     
+     - Returns: A time-formatted string.
+     */
     func secondsToTime(units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let formatter = dateComponentsFormatter(units: units, style: style, context: context)
         
         return formatter.string(from: self) ?? "\(self)s"
     }
     
-    /// Converts a number to a day count string.
-    ///
-    /// - Parameters:
-    ///   - style: Units style.
-    ///   - context: Formatting context.
-    /// - Returns: A day-formatted string.
+    /**
+     Converts a number to a day count string.
+     
+     - Parameters:
+        - style: Units style.
+        - context: Formatting context.
+     
+     - Returns: A day-formatted string.
+     */
     func day(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(day: Int(self))
         let formatter = dateComponentsFormatter(units: [.day], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
     
-    /// Converts a number to a month count string.
-    ///
-    /// - Parameters:
-    ///   - style: Units style.
-    ///   - context: Formatting context.
-    /// - Returns: A month-formatted string.
+    /**
+     Converts a number to a month count string.
+     
+     - Parameters:
+        - style: Units style.
+        - context: Formatting context.
+     
+     - Returns: A month-formatted string.
+     */
     func month(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(month: Int(self))
         let formatter = dateComponentsFormatter(units: [.month], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
     
-    /// Converts a number to a year count string.
-    ///
-    /// - Parameters:
-    ///   - style: Units style.
-    ///   - context: Formatting context.
-    /// - Returns: A year-formatted string.
+    /**
+     Converts a number to a year count string.
+     
+     - Parameters:
+        - style: Units style.
+        - context: Formatting context.
+     
+     - Returns: A year-formatted string.
+     */
     func year(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(year: Int(self))
         let formatter = dateComponentsFormatter(units: [.year], style: style, context: context)
@@ -220,40 +254,53 @@ public extension Double {
 
 // MARK: Math / Logic
 public extension Double {
-    /// Returns a string representation of the number rounded to a specified number of decimal places.
-    ///
-    /// - Parameter places: Number of decimal places.
-    /// - Returns: A rounded string.
+    /**
+     Returns a string representation of the number rounded to a specified number of decimal places.
+     
+     - Parameters:
+        - places: Number of decimal places.
+     
+     - Returns: A rounded string.
+     */
     func roundedString(toPlaces places: Int = 2) -> String {
         String(format: "%.\(places)f", self)
     }
     
-    /// Clamps the number within the specified range.
-    ///
-    /// - Parameters:
-    ///   - lower: Lower bound.
-    ///   - upper: Upper bound.
-    /// - Returns: The clamped value.
+    /**
+     Clamps the number within the specified range.
+     
+     - Parameters:
+        - lower: Lower bound.
+        - upper: Upper bound.
+     
+     - Returns: The clamped value.
+     */
     func clamped(min lower: Double, max upper: Double) -> Double {
         Swift.max(lower, Swift.min(self, upper))
     }
     
-    /// Linearly interpolates between self and a target value.
-    ///
-    /// - Parameters:
-    ///   - to: Target value.
-    ///   - t: Interpolation amount (0–1).
-    /// - Returns: Interpolated value.
+    /**
+     Linearly interpolates between self and a target value.
+     
+     - Parameters:
+        - to: Target value.
+        - t: Interpolation amount (0–1).
+     
+     - Returns: Interpolated value.
+     */
     func lerp(to: Double, by t: Double) -> Double {
         self + (to - self) * t
     }
     
-    /// Scales the number from one range to another.
-    ///
-    /// - Parameters:
-    ///   - oldRange: Original value range.
-    ///   - newRange: Target range.
-    /// - Returns: Value mapped to the new range.
+    /**
+     Scales the number from one range to another.
+     
+     - Parameters:
+        - oldRange: Original value range.
+        - newRange: Target range.
+     
+     - Returns: Value mapped to the new range.
+     */
     func scaled(from oldRange: ClosedRange<Double>, to newRange: ClosedRange<Double>) -> Double {
         guard oldRange.lowerBound != oldRange.upperBound else { return newRange.lowerBound }
         let ratio = (self - oldRange.lowerBound) / (oldRange.upperBound - oldRange.lowerBound)
