@@ -186,6 +186,22 @@ public extension Double {
     func temperature(baseUnit: UnitTemperature = .kelvin, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
+    
+    /**
+     Formats the Double as a speed value in metersPerSecond.
+     
+     - Parameters:
+        - baseUnit: Speed Unit (default is `.metersPerSecond`).
+        - unitStyle: Display style.
+        - minFraction: Minimum fraction digits.
+        - maxFraction: Maximum fraction digits.
+        - groupSize: Optional grouping size.
+     
+     - Returns: A speed-formatted string.
+     */
+    func speed(baseUnit: UnitSpeed = .metersPerSecond, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+        return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
+    }
 }
 
 // MARK: Time Components
