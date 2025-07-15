@@ -210,14 +210,15 @@ public extension Double {
      Converts seconds into a readable time format (e.g., "1h 3m").
      
      - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - units: Allowed time components.
         - style: Output format style.
         - context: Formatting context.
      
      - Returns: A time-formatted string.
      */
-    func secondsToTime(units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
-        let formatter = dateComponentsFormatter(units: units, style: style, context: context)
+    func secondsToTime(calendar: Calendar = .autoupdatingCurrent, units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+        let formatter = dateComponentsFormatter(calendar: calendar, units: units, style: style, context: context)
         
         return formatter.string(from: self) ?? "\(self)s"
     }
@@ -226,14 +227,15 @@ public extension Double {
      Converts a number to a day count string.
      
      - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
      
      - Returns: A day-formatted string.
      */
-    func day(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    func day(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(day: Int(self))
-        let formatter = dateComponentsFormatter(units: [.day], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: calendar, units: [.day], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
     
@@ -241,14 +243,15 @@ public extension Double {
      Converts a number to a month count string.
      
      - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
      
      - Returns: A month-formatted string.
      */
-    func month(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    func month(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(month: Int(self))
-        let formatter = dateComponentsFormatter(units: [.month], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: calendar, units: [.month], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
     
@@ -256,14 +259,15 @@ public extension Double {
      Converts a number to a year count string.
      
      - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
      
      - Returns: A year-formatted string.
      */
-    func year(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    func year(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(year: Int(self))
-        let formatter = dateComponentsFormatter(units: [.year], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: calendar, units: [.year], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
 }
@@ -398,15 +402,16 @@ private extension Double {
         return formatter
     }
     
-    func dateComponentsFormatter(units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> DateComponentsFormatter {
+    func dateComponentsFormatter(calendar: Calendar, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
+        formatter.calendar = calendar
         formatter.allowedUnits = units
         formatter.unitsStyle = style
         formatter.formattingContext = context
         return formatter
     }
     
-    func measurementString<T: Dimension>(unit: T, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+    func measurementString<T: Dimension>(unit: T, unitStyle: Formatter.UnitStyle, minFraction: Int?, maxFraction: Int?, groupSize: Int?) -> String {
         let measurement = Measurement(value: self, unit: unit)
         let formatter = MeasurementFormatter()
         formatter.unitStyle = unitStyle

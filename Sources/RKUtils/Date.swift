@@ -13,16 +13,18 @@ public extension Date {
     Converts the date to a human-readable string using a localized template.
      
      - Parameters:
+        - calendar: The calendar to be used. Defaults to be .autoupdatingCurrent
         - timeZone: The time zone to use. Defaults to the current time zone.
         - locale: The locale to use. Defaults to the current locale.
         - localizedDateFormatFromTemplate: The localized template to use (e.g. "MMMdy").
      
      - Returns: A formatted date string.
      */
-    func readableString(timeZone: TimeZone? = TimeZone.current, locale: Locale = Locale.current, localizedDateFormatFromTemplate: String) -> String {
+    func readableString(calendar: Calendar? = .autoupdatingCurrent, timeZone: TimeZone = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, localizedDateFormatFromTemplate: String) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = timeZone
         formatter.locale = locale
+        formatter.calendar = calendar
         formatter.setLocalizedDateFormatFromTemplate(localizedDateFormatFromTemplate)
         
         return formatter.string(from: self)
@@ -38,10 +40,11 @@ public extension Date {
      
      - Returns: A formatted date string.
      */
-    func readableString(timeZone: TimeZone? = TimeZone.current, locale: Locale = Locale.current, format: String) -> String {
+    func readableString(calendar: Calendar = .autoupdatingCurrent, timeZone: TimeZone = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, format: String) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = timeZone
         formatter.locale = locale
+        formatter.calendar = calendar
         formatter.dateFormat = format
         
         return formatter.string(from: self)
@@ -56,11 +59,16 @@ public extension Date {
      
      - Returns: The formatted date string.
      */
-    func toString(format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone? = nil) -> String {
+    func toString(format: String = "yyyy-MM-dd HH:mm:ss", calendar: Calendar? = nil, timeZone: TimeZone? = nil) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format
+        
         if let timeZone = timeZone {
             formatter.timeZone = timeZone
+        }
+        
+        if let calendar = calendar {
+            formatter.calendar = calendar
         }
         
         return formatter.string(from: self)
@@ -77,11 +85,15 @@ public extension Date {
      
      - Returns: A localized relative time string.
      */
-    func relativeTime(to referanceDate: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated) -> String {
+    func relativeTime(to referanceDate: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated, calendar: Calendar? = nil) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.formattingContext = context
         formatter.dateTimeStyle = style
         formatter.unitsStyle = unitStyle
+        
+        if let calendar = calendar {
+            formatter.calendar = calendar
+        }
         
         return formatter.localizedString(for: self, relativeTo: referanceDate)
     }
@@ -95,8 +107,7 @@ public extension Date {
      
      - Returns: The difference in the specified unit.
      */
-    func distanceOf(_ unit: Calendar.Component, till referanceDate: Date) -> Int {
-        let calendar = Calendar.current
+    func distanceOf(_ unit: Calendar.Component, till referanceDate: Date, calendar: Calendar = .autoupdatingCurrent) -> Int {
         let components = calendar.dateComponents([unit], from: self, to: referanceDate)
         
         return components.value(for: unit) ?? 0
@@ -111,8 +122,7 @@ public extension Date {
      
      - Returns: The difference in the specified unit.
      */
-     func distanceOf(_ unit: Calendar.Component, from referanceDate: Date) -> Int {
-        let calendar = Calendar.current
+     func distanceOf(_ unit: Calendar.Component, from referanceDate: Date, calendar: Calendar = .autoupdatingCurrent) -> Int {
         let components = calendar.dateComponents([unit], from: referanceDate, to: self)
         
         return components.value(for: unit) ?? 0
@@ -127,9 +137,9 @@ public extension Date {
      
      - Returns: The resulting future date.
      */
-    func dateAfter(_ count: Int, _ unit: Calendar.Component) -> Date? {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
+    func dateAfter(_ count: Int, _ unit: Calendar.Component, calendar: Calendar = .autoupdatingCurrent, timeZone: TimeZone = .autoupdatingCurrent) -> Date? {
+        var calendar = calendar
+        calendar.timeZone = timeZone
         
         return calendar.date(byAdding: unit, value: count, to: self)
     }
@@ -143,9 +153,9 @@ public extension Date {
      
      - Returns: The resulting past date.
      */
-    func dateBefore(_ count: Int, _ unit: Calendar.Component) -> Date? {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
+    func dateBefore(_ count: Int, _ unit: Calendar.Component, calendar: Calendar = .autoupdatingCurrent, timeZone: TimeZone = .autoupdatingCurrent) -> Date? {
+        var calendar = calendar
+        calendar.timeZone = timeZone
         
         return calendar.date(byAdding: unit, value: -count, to: self)
     }
@@ -158,7 +168,7 @@ public extension Date {
      
      - Returns: An array of 7 dates representing the current week.
      */
-    func datesOfCurrentWeek(using calendar: Calendar = .current) -> [Date] {
+    func datesOfCurrentWeek(using calendar: Calendar = .autoupdatingCurrent) -> [Date] {
         let currentWeekday = calendar.component(.weekday, from: self)
         let firstWeekdayIndex = calendar.firstWeekday
         
@@ -183,9 +193,7 @@ extension Date {
      
      - Returns: `true` if the date is today.
     */
-     func isInToday() -> Bool {
-        let calendar = Calendar.current
-        
+    func isInToday(calendar: Calendar = .autoupdatingCurrent) -> Bool {
          return calendar.isDateInToday(self)
     }
     
