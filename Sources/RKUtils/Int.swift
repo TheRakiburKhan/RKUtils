@@ -61,7 +61,7 @@ public extension Int {
      - Returns: A percentage-formatted string.
      */
     func percentage(minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
-        let value = self / 100
+        let value = Double(self) / 100.0
         let formatter = numberFormatter(numberStyle: .percent, groupSize: groupSize)
         return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.2f%%", value * 100)
     }
