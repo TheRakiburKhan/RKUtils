@@ -85,6 +85,7 @@ public extension Date {
      
      - Returns: A localized relative time string.
      */
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func relativeTime(to referanceDate: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated, calendar: Calendar? = nil) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.formattingContext = context
