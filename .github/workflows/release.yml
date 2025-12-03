@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: macos-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Validate package
+        run: swift build -v
+
+      - name: Run tests
+        run: swift test -v
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          echo "version=$TAG" >> $GITHUB_OUTPUT
+          echo "Version: $TAG"
+
+      - name: Extract changelog for version
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Extract changelog section for this version
+          awk '/## \['"$VERSION"'\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md > release_notes.md
+
+          # Show what we extracted
+          echo "Release notes:"
+          cat release_notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: RKUtils v${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify SPM Resolution
+        run: |
+          echo "Testing SPM package resolution..."
+          cd /tmp
+          mkdir test-resolution
+          cd test-resolution
+
+          # Create a test Package.swift
+          cat > Package.swift << EOF
+          // swift-tools-version: 6.0
+          import PackageDescription
+
+          let package = Package(
+              name: "TestResolution",
+              platforms: [.iOS(.v13), .macOS(.v10_15)],
+              dependencies: [
+                  .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "${{ steps.version.outputs.version }}")
+              ],
+              targets: [
+                  .target(name: "TestResolution", dependencies: [
+                      .product(name: "RKUtils", package: "RKUtils")
+                  ])
+              ]
+          )
+          EOF
+
+          # Try to resolve
+          swift package resolve
+          echo "✅ Package resolution successful!"
