@@ -11,21 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.0.0] - 2024-12-03
+## [2.0.0] - 2025-12-04
 
 ### 🎉 Major Update - macOS Support & Testing Framework Migration
 
 ### Added
 
 #### 🍎 macOS Support (AppKit)
+
 **New Library**: `RKUtilsMacOS` - Complete macOS/AppKit support with feature parity to UIKit extensions
 
 - **NSColor Extensions**
+
   - `init(hexString:alpha:)` - Initialize NSColor from hex string (e.g., "#FF5733")
   - Consistent API with UIColor hex initializer
   - Full RGB support with optional alpha channel
 
 - **NSView Extensions** - Complete parity with UIView
+
   - `setCornerRadius(cornerRadius:)` - Set corner radius with automatic layer-backing
   - `roundedCorner(corners:radius:clips:)` - Round specific corners using CACornerMask
   - `rounded(clips:)` - Make view circular
@@ -36,17 +39,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `applyBlurEffect(material:blendingMode:)` - Add blur effect using NSVisualEffectView
 
 - **NSTextField Extensions**
+
   - `textPublisher()` - Combine publisher for text changes (works with NSSecureTextField)
   - `setLeftPaddingPoints(_:)` - Add left padding (simplified placeholder)
   - `setRightPaddingPoints(_:)` - Add right padding (simplified placeholder)
 
 - **NSSecureTextField Extensions** - Password field with show/hide toggle
+
   - `setSecureTextToggleToRight(_:)` - Add show/hide password toggle button with eye icon
   - Automatic switching between NSSecureTextField and NSTextField for password visibility
   - SF Symbols support (macOS 11.0+) with emoji fallback (macOS 10.15)
   - State preservation during toggle (text, font, formatting, focus)
 
 - **NSCollectionView Extensions**
+
   - `visibleCurrentCellIndexPath` - Get index path of currently visible cell
   - `register(cell:fromNib:bundle:)` - Type-safe cell registration
 
@@ -55,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `dequeueReusableCell(cell:owner:)` - Type-safe cell dequeue
 
 #### 🧪 Testing Framework Migration
+
 **Migrated from XCTest to Swift Testing framework**
 
 - All 124 tests now use modern Swift Testing framework
@@ -67,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### ✅ Comprehensive Test Coverage (124 tests total)
 
 **Cross-Platform Core Tests** (109 tests)
+
 - String extensions tests (15 tests) - Email validation, date parsing, base64 encoding
 - Date extensions tests (20 tests) - Date manipulation, formatting, relative time
 - Int extensions tests (17 tests) - Number formatting, conversions, utilities
@@ -76,22 +84,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Data extensions tests (4 tests) - String conversions
 
 **UIKit Tests** (27 tests)
+
 - UIColor extensions tests (7 tests) - Hex string initialization
 - CGRect extensions tests (5 tests) - MinEdge calculations
 - UIView extensions tests (15 tests) - Corner radius, borders, shadows, gradients, blur, animations
 
 **AppKit Tests** (17 tests)
+
 - NSColor extensions tests (2 tests) - Hex string initialization
 - NSView extensions tests (15 tests) - Complete feature parity with UIView tests
 
 #### 📦 Package Structure Improvements
 
 **Platform-Specific Targets**
+
 - `RKUtils` - Cross-platform utilities (all platforms)
 - `RKUtilsUI` - UIKit-specific (iOS 13+, tvOS 13+, visionOS 1+, Catalyst 13+)
 - `RKUtilsMacOS` - AppKit-specific (macOS 10.15+)
 
 **Test Organization**
+
 - `RKUtilsTests` - Cross-platform utility tests
 - `RKUtilsUITests` - UIKit extension tests
 - `RKUtilsMacOSTests` - AppKit extension tests
@@ -99,12 +111,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 #### 📁 File Organization
+
 - **Extracted NSSecureTextField** - Moved to dedicated file (NSSecureTextField.swift) for better code organization
 - **Modular Structure** - Each UI component has its own file
 - **Consistent Naming** - Unified naming convention across all targets
 
 #### 🎯 Platform Compatibility
+
 **Minimum Platform Versions:**
+
 - iOS 13.0
 - macOS 10.15 (Catalina)
 - watchOS 6.0
@@ -119,35 +134,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### AppKit vs UIKit Adaptations
 
 **Layer-backing**
+
 - All NSView layer operations automatically enable `wantsLayer = true`
 - Consistent API despite different underlying implementations
 
 **Color Types**
+
 - NSColor instead of UIColor
 - System colors adapted (`.secondaryLabelColor` vs `.secondaryLabel`)
 
 **Coordinate System**
+
 - Handled AppKit's bottom-left origin vs UIKit's top-left origin
 - Gradient positioning adjusted for coordinate system differences
 
 **Animations**
+
 - NSAnimationContext with implicit animation instead of UIView.animate
 - Smooth transitions with alpha value support
 
 **Blur Effects**
+
 - NSVisualEffectView with `material` and `blendingMode` parameters
 - AppKit materials (`.contentBackground`, `.hudWindow`, etc.) instead of UIKit blur styles
 
 **Autoresizing Masks**
+
 - `.width` and `.height` instead of `.flexibleWidth` and `.flexibleHeight`
 
 #### Secure Text Implementation
 
 **UIKit Approach**
+
 - Toggle `isSecureTextEntry` property on same UITextField instance
 - Simple property change
 
 **AppKit Approach**
+
 - Swap between NSSecureTextField and NSTextField instances
 - Required due to separate class hierarchy in AppKit
 - Full state preservation during swap
@@ -177,6 +200,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 If you're adapting code from UIKit to AppKit using this library:
 
 #### View Styling
+
 ```swift
 // UIKit
 let view = UIView()
@@ -194,6 +218,7 @@ view.applyBlurEffect(material: .contentBackground)
 ```
 
 #### Color Initialization
+
 ```swift
 // UIKit
 let color = UIColor(hexString: "#FF5733")
@@ -205,6 +230,7 @@ let colorWithAlpha = NSColor(hexString: "#FF5733", alpha: 0.5)
 ```
 
 #### Secure Text Fields
+
 ```swift
 // UIKit
 let textField = UITextField()
@@ -218,6 +244,7 @@ secureTextField.setSecureTextToggleToRight(.systemBlue)
 ### 🧪 Test Migration from XCTest to Swift Testing
 
 #### Basic Test Structure
+
 ```swift
 // Old (XCTest)
 import XCTest
@@ -245,6 +272,7 @@ struct MyTests {
 ```
 
 #### Parameterized Tests
+
 ```swift
 // Old (XCTest) - Required multiple test methods
 func testRed() { /* test with red */ }
@@ -259,6 +287,7 @@ func colorTest(color: String) {
 ```
 
 #### UI Tests with MainActor
+
 ```swift
 // Swift Testing with UI components
 @MainActor
