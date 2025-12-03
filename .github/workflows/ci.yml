@@ -23,7 +23,7 @@ concurrency:
 jobs:
   test:
     name: Test on macOS
-    runs-on: macos-latest
+    runs-on: self-hosted
     timeout-minutes: 30
 
     steps:
@@ -54,7 +54,7 @@ jobs:
 
   test-ios:
     name: Test iOS
-    runs-on: macos-latest
+    runs-on: self-hosted
     timeout-minutes: 30
 
     steps:
@@ -117,7 +117,7 @@ jobs:
 
   test-macos:
     name: Test macOS
-    runs-on: macos-latest
+    runs-on: self-hosted
     timeout-minutes: 30
 
     steps:
@@ -143,7 +143,7 @@ jobs:
 
   lint:
     name: Swift Lint
-    runs-on: macos-latest
+    runs-on: self-hosted
     timeout-minutes: 15
 
     steps:
@@ -157,7 +157,7 @@ jobs:
 
   summary:
     name: Build Summary
-    runs-on: macos-latest
+    runs-on: self-hosted
     needs: [test, test-ios, test-macos, lint]
     if: always()
 
