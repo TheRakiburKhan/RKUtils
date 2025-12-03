@@ -1,0 +1,181 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
+      - ".gitignore"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
+      - ".gitignore"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test on macOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Build package
+        run: swift build -v
+
+      - name: Run tests
+        run: swift test -v
+
+  test-ios:
+    name: Test iOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Select iOS simulator destination
+        run: |
+          # Get highest iOS runtime (identifier + version)
+          RUNTIME_INFO=$(xcrun simctl list runtimes --json | jq -r '.runtimes[]
+            | select(.identifier | test("com.apple.CoreSimulator.SimRuntime.iOS"))
+            | "\(.identifier)|\(.version)"' | sort -t'|' -k2 -Vr | head -n1)
+
+          if [ -z "$RUNTIME_INFO" ]; then
+            echo "ERROR: No iOS runtimes found"
+            exit 1
+          fi
+
+          RUNTIME_ID=${RUNTIME_INFO%%|*}
+          RUNTIME_VERSION=${RUNTIME_INFO##*|}
+
+          echo "Highest iOS runtime detected: $RUNTIME_VERSION (id: $RUNTIME_ID)"
+
+          # Choose first available iPhone device for that runtime
+          DEVICE_INFO=$(xcrun simctl list devices --json | jq -r --arg rid "$RUNTIME_ID" '
+            (.devices[$rid] // [])[]
+            | select(.isAvailable == true)
+            | select(.name | test("iPhone"))
+            | "\(.udid)|\(.name)"' | head -n1)
+
+          if [ -z "$DEVICE_INFO" ]; then
+            echo "ERROR: No available iPhone simulator found for runtime $RUNTIME_ID"
+            exit 1
+          fi
+
+          DEVICE_UDID=${DEVICE_INFO%%|*}
+          DEVICE_NAME=${DEVICE_INFO##*|}
+
+          echo "Selected simulator: $DEVICE_NAME (udid: $DEVICE_UDID, iOS $RUNTIME_VERSION)"
+
+          # Use UDID for more robust device identification
+          echo "IOS_SIM_DESTINATION=platform=iOS Simulator,id=${DEVICE_UDID}" >> $GITHUB_ENV
+
+      - name: Test on iOS Simulator
+        run: |
+          xcodebuild test \
+            -scheme RKUtils \
+            -destination "${{ env.IOS_SIM_DESTINATION }}" \
+            -enableCodeCoverage YES
+
+  test-macos:
+    name: Test macOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Test on macOS
+        run: |
+          xcodebuild test \
+            -scheme RKUtils \
+            -destination 'platform=macOS' \
+            -enableCodeCoverage YES
+
+  lint:
+    name: Swift Lint
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint package
+        run: |
+          # Check for Swift format issues
+          swift package diagnose
+
+  summary:
+    name: Build Summary
+    runs-on: macos-latest
+    needs: [test, test-ios, test-macos, lint]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## RKUtils CI Results 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow**: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SPM Tests (macOS) | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| iOS Tests | ${{ needs.test-ios.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS Tests | ${{ needs.test-macos.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
