@@ -23,7 +23,7 @@ concurrency:
 jobs:
   test:
     name: Test on macOS
-    runs-on: self-hosted
+    runs-on: macos-latest
     timeout-minutes: 30
 
     steps:
@@ -54,7 +54,7 @@ jobs:
 
   build-ios:
     name: Build for iOS
-    runs-on: self-hosted
+    runs-on: macos-latest
     timeout-minutes: 20
 
     steps:
@@ -120,7 +120,7 @@ jobs:
 
   build-macos:
     name: Build for macOS
-    runs-on: self-hosted
+    runs-on: macos-latest
     timeout-minutes: 20
 
     steps:
@@ -148,7 +148,7 @@ jobs:
 
   validate:
     name: Package Validation
-    runs-on: self-hosted
+    runs-on: macos-latest
     timeout-minutes: 15
 
     steps:
@@ -174,7 +174,7 @@ jobs:
 
   summary:
     name: Build Summary
-    runs-on: self-hosted
+    runs-on: macos-latest
     needs: [test, build-ios, build-macos, validate]
     if: always()
 
