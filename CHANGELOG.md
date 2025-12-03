@@ -185,6 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Includes helpful UIKit & Foundation extensions:
   - `UIView` (corner radius, shadows, gradients, blur, animations)
   - `UITextField` and `UITextView` (keyboard Done button, secure text toggle)
+  - `UITextField` and `UITextView` (keyboard Done button, secure text toggle)
   - `UIStoryboard` (type-safe instantiation)
   - `UIScreen` (min/max edge helpers)
   - `Bundle` (version, build, name, ID)
