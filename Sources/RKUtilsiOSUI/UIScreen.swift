@@ -5,7 +5,7 @@
 //  Created by Rakibur Khan on 2/4/24.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(visionOS) && !os(watchOS)
 import UIKit
 
 public extension UIScreen {

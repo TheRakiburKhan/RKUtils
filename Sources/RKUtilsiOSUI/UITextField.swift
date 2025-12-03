@@ -5,7 +5,7 @@
 //  Created by Rakibur Khan on 3/4/24.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 import Combine
 
