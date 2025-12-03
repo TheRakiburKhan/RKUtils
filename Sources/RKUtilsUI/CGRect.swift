@@ -9,6 +9,6 @@ import CoreFoundation
 
 public extension CGRect {
     var minEdge: CGFloat {
-        return min(width, height)
+        return min(self.size.width, self.size.height)
     }
 }
