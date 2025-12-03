@@ -5,7 +5,7 @@
 //  Created by Rakibur Khan on 3/4/24.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
 public extension UIView {
@@ -33,7 +33,7 @@ public extension UIView {
         }
     }
     
-    func setShadow(color: UIColor? = .secondaryLabel, background: UIColor? = .systemBackground, offset: CGSize = .zero, opacity: Float = 1, radius: CGFloat = 10, cornerRadius: CGFloat = 0, path: CGPath? = nil) {
+    func setShadow(color: UIColor? = .secondaryLabel, background: UIColor? = nil, offset: CGSize = .zero, opacity: Float = 1, radius: CGFloat = 10, cornerRadius: CGFloat = 0, path: CGPath? = nil) {
         roundedCorner(radius: cornerRadius, masks: true, clips: false)
         
         layer.bounds = bounds
@@ -82,7 +82,7 @@ public extension UIView{
 }
 
 public extension UIView {
-    func applyBlurEffect(style: UIBlurEffect.Style = .systemUltraThinMaterialDark) {
+    func applyBlurEffect(style: UIBlurEffect.Style = .regular) {
         let blurEffect = UIBlurEffect(style: style)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = bounds
