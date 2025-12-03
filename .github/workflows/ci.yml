@@ -146,8 +146,8 @@ jobs:
             -sdk macosx \
             -destination "platform=macOS"
 
-  lint:
-    name: Swift Lint
+  validate:
+    name: Package Validation
     runs-on: self-hosted
     timeout-minutes: 15
 
@@ -155,15 +155,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Lint package
+      - name: Validate Package.swift
         run: |
-          # Check for Swift format issues
-          swift package diagnose
+          # Validate Package.swift manifest syntax
+          swift package dump-package > /dev/null
+          echo "✅ Package.swift is valid"
+
+      - name: Resolve dependencies
+        run: |
+          # Resolve and validate dependencies
+          swift package resolve
+          echo "✅ Dependencies resolved"
+
+      - name: Show dependency tree
+        run: |
+          # Display resolved dependency graph
+          swift package show-dependencies
 
   summary:
     name: Build Summary
     runs-on: self-hosted
-    needs: [test, build-ios, build-macos, lint]
+    needs: [test, build-ios, build-macos, validate]
     if: always()
 
     steps:
@@ -183,4 +195,4 @@ jobs:
           echo "| Tests (124 tests) | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| iOS Build | ${{ needs.build-ios.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| macOS Build | ${{ needs.build-macos.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Package Validation | ${{ needs.validate.result }} |" >> $GITHUB_STEP_SUMMARY
