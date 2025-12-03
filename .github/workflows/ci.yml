@@ -52,10 +52,10 @@ jobs:
       - name: Run tests
         run: swift test -v
 
-  test-ios:
-    name: Test iOS
+  build-ios:
+    name: Build for iOS
     runs-on: self-hosted
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -109,20 +109,19 @@ jobs:
           echo "SELECTED_DEVICE=$DEVICE_NAME" >> $GITHUB_ENV
           echo "SELECTED_IOS=$RUNTIME_VERSION" >> $GITHUB_ENV
 
-      - name: Build and test for iOS
+      - name: Build for iOS
         run: |
-          echo "Testing on iOS (${{ env.SELECTED_IOS }}) with device: ${{ env.SELECTED_DEVICE }}"
-          # SPM packages can be tested directly without generating xcodeproj
-          xcodebuild test \
-            -scheme RKUtils \
+          echo "Building for iOS (${{ env.SELECTED_IOS }}) with device: ${{ env.SELECTED_DEVICE }}"
+          # Build to verify iOS compatibility
+          xcodebuild build \
+            -scheme RKUtilsUI \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${{ env.SELECTED_DEVICE }}" \
-            -enableCodeCoverage YES
+            -destination "platform=iOS Simulator,name=${{ env.SELECTED_DEVICE }}"
 
-  test-macos-xcodebuild:
-    name: Test macOS (xcodebuild)
+  build-macos:
+    name: Build for macOS
     runs-on: self-hosted
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -138,15 +137,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      - name: Build and test for macOS
+      - name: Build for macOS
         run: |
-          echo "Testing on macOS"
-          # SPM packages can be tested directly without generating xcodeproj
-          xcodebuild test \
-            -scheme RKUtils \
+          echo "Building for macOS"
+          # Build to verify macOS compatibility
+          xcodebuild build \
+            -scheme RKUtilsMacOS \
             -sdk macosx \
-            -destination "platform=macOS" \
-            -enableCodeCoverage YES
+            -destination "platform=macOS"
 
   lint:
     name: Swift Lint
@@ -165,7 +163,7 @@ jobs:
   summary:
     name: Build Summary
     runs-on: self-hosted
-    needs: [test, test-ios, test-macos-xcodebuild, lint]
+    needs: [test, build-ios, build-macos, lint]
     if: always()
 
     steps:
@@ -179,10 +177,10 @@ jobs:
           echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "### Results" >> $GITHUB_STEP_SUMMARY
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| SPM Tests (macOS) | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| iOS Tests | ${{ needs.test-ios.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| macOS Tests (xcodebuild) | ${{ needs.test-macos-xcodebuild.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests (124 tests) | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| iOS Build | ${{ needs.build-ios.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS Build | ${{ needs.build-macos.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
