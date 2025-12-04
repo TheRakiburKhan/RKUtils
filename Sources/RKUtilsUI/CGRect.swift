@@ -5,8 +5,8 @@
 //  Created by Rakibur Khan on 2/4/24.
 //
 
-#if canImport(CoreFoundation)
-import CoreFoundation
+#if canImport(CoreGraphics)
+import CoreGraphics
 
 public extension CGRect {
     var minEdge: CGFloat {
