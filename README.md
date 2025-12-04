@@ -1,18 +1,19 @@
 # RKUtils
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20visionOS-blue.svg" alt="Platform">
+  <img src="https://img.shields.io/badge/Platform-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20visionOS%20%7C%20Linux-blue.svg" alt="Platform">
   <img src="https://img.shields.io/badge/Swift-6.0+-orange.svg" alt="Swift">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
   <img src="https://img.shields.io/badge/SPM-Compatible-brightgreen.svg" alt="SPM">
 </p>
 
-**RKUtils** is a comprehensive, cross-platform Swift package offering a rich collection of extensions and utilities for UIKit, AppKit, and Foundation. Built for developers who value clean code, type safety, and productivity across all Apple platforms.
+**RKUtils** is a comprehensive, cross-platform Swift package offering a rich collection of extensions and utilities for UIKit, AppKit, and Foundation. Built for developers who value clean code, type safety, and productivity across Apple platforms and Linux.
 
 ## ✨ Highlights
 
-- 🍎 **Full Cross-Platform Support** - iOS, macOS, tvOS, watchOS, visionOS
-- 🎨 **UIKit & AppKit Parity** - Consistent APIs across platforms
+- 🌐 **Full Cross-Platform Support** - iOS, macOS, tvOS, watchOS, visionOS, Linux
+- 🎨 **UIKit & AppKit Parity** - Consistent APIs across Apple platforms
+- 🐧 **Linux Compatible** - Core utilities work on Linux via swift-corelibs-foundation
 - 🧪 **124 Tests** - Comprehensive test coverage with Swift Testing
 - 📦 **Zero Dependencies** - Lightweight and efficient
 - 🔧 **Type-Safe** - Leverage Swift's type system for safer code
@@ -40,7 +41,7 @@ https://github.com/TheRakiburKhan/RKUtils.git
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "2.0.0")
+    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "2.1.0")
 ]
 ```
 
@@ -306,17 +307,29 @@ data.appendStrings(["Hello", "World"])
 
 ## 📱 Platform Requirements
 
-| Platform    | Minimum Version   |
-| ----------- | ----------------- |
-| iOS         | 13.0+             |
-| macOS       | 10.15+ (Catalina) |
-| tvOS        | 13.0+             |
-| watchOS     | 6.0+              |
-| visionOS    | 1.0+              |
-| macCatalyst | 13.0+             |
+| Platform    | Minimum Version   | Notes                                   |
+| ----------- | ----------------- | --------------------------------------- |
+| iOS         | 13.0+             | Full feature set                        |
+| macOS       | 10.15+ (Catalina) | Full feature set                        |
+| tvOS        | 13.0+             | Full feature set                        |
+| watchOS     | 6.0+              | Full feature set                        |
+| visionOS    | 1.0+              | Full feature set                        |
+| macCatalyst | 13.0+             | Full feature set                        |
+| Linux       | Any               | Core utilities (see limitations below) |
 
 **Swift Version:** 6.0+
-**Xcode Version:** 16.0+
+**Xcode Version:** 16.0+ (for Apple platforms)
+
+### Linux Limitations
+
+On Linux, the following features are **unavailable** (Apple frameworks only):
+- CoreLocation extensions (CLLocationCoordinate2D)
+- CoreGraphics extensions (CGRect)
+- SwiftUI extensions (Color)
+- Measurement formatters (distance, temperature, speed)
+- Relative date formatting ("2 hours ago")
+
+Linux users get simplified fallback implementations for time formatting functions. See [CHANGELOG.md](CHANGELOG.md) for platform-specific API differences.
 
 ---
 
@@ -326,19 +339,22 @@ RKUtils is organized into three main targets:
 
 ### `RKUtils` (Cross-Platform)
 
-Core utilities that work on all Apple platforms:
+Core utilities that work on **all platforms** (Apple + Linux):
 
 - String, Date, Int, Double extensions
 - Bundle helpers
-- CLLocationCoordinate2D utilities
 - Data extensions
+
+**Platform-specific (Apple only):**
+- CLLocationCoordinate2D utilities (requires CoreLocation)
+- CGRect utilities (requires CoreGraphics)
+- Color utilities (requires SwiftUI)
 
 ### `RKUtilsUI` (UIKit Platforms)
 
 UIKit-specific extensions for iOS, tvOS, visionOS, and macCatalyst:
 
 - UIView, UIColor, UITextField
-- CGRect utilities
 
 ### `RKUtilsMacOS` (AppKit Platform)
 
@@ -347,7 +363,7 @@ AppKit-specific extensions for macOS:
 - NSView, NSColor, NSTextField, NSSecureTextField
 - NSCollectionView, NSTableView helpers
 
-**Philosophy:** Maximum code reuse with platform-specific adaptations where needed. Consistent APIs across platforms for easier cross-platform development.
+**Philosophy:** Maximum code reuse with platform-specific adaptations where needed. Consistent APIs across platforms for easier cross-platform development. Linux support via swift-corelibs-foundation with simplified fallbacks for Apple-only formatters.
 
 ---
 
@@ -361,10 +377,16 @@ swift test
 
 **Test Coverage:**
 
+**Apple Platforms (124 tests):**
 - ✅ 109 cross-platform core tests
-- ✅ 27 UIKit tests
-- ✅ 17 AppKit tests
-- ✅ All tests passing on all platforms
+- ✅ 27 UIKit tests (iOS/tvOS/visionOS)
+- ✅ 17 AppKit tests (macOS)
+
+**Linux (93 tests):**
+- ✅ 92 passing (core utilities)
+- ⚠️ 1 expected failure (complex locale formatting - swift-corelibs-foundation limitation)
+
+**CI/CD:** Automated testing on iOS, macOS, and Linux via GitHub Actions
 
 ---
 
