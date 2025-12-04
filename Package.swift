@@ -46,11 +46,14 @@ let package = Package(
                 .define("APPKIT_AVAILABLE", .when(platforms: [.macOS]))
             ]
         ),
-        
-        // SwiftUI-specific cross-platform target (works on all platforms)
+
+        // SwiftUI-specific utilities (Apple platforms only - SwiftUI not available on Linux/Windows)
         .target(
             name: "RKUtilsSwiftUI",
-            dependencies: ["RKUtils"]
+            dependencies: ["RKUtils"],
+            swiftSettings: [
+                .define("SWIFTUI_AVAILABLE", .when(platforms: [.iOS, .macOS, .watchOS, .tvOS, .visionOS, .macCatalyst]))
+            ]
         ),
 
         // Tests
