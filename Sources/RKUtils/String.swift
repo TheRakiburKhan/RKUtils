@@ -34,11 +34,15 @@ public extension String {
     }
     
     func isValidEmail() -> Bool {
-        let emailRegex =
-        #"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$"#
-        
-        let predicate = NSPredicate(format: "SELF MATCHES[c] %@", emailRegex)
-        return predicate.evaluate(with: self)
+        // More accurate email regex that:
+        // - Requires at least one char before @
+        // - Domain can't start/end with hyphen or dot
+        // - Domain parts separated by literal dots (escaped \.)
+        // - TLD must be at least 2 letters
+        let emailRegex = #"^[A-Z0-9][A-Z0-9._%+-]*@[A-Z0-9]([A-Z0-9-]*[A-Z0-9])?(\.[A-Z0-9]([A-Z0-9-]*[A-Z0-9])?)*\.[A-Z]{2,}$"#
+
+        // Use native Swift regex matching (cross-platform compatible)
+        return self.range(of: emailRegex, options: [.regularExpression, .caseInsensitive]) != nil
     }
     
     func readFromFile(fileURL: URL?) -> String? {
