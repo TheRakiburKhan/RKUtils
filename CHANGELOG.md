@@ -11,6 +11,139 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2025-12-04
+
+### 🌐 Linux & Android Platform Support
+
+### Added
+
+#### 🐧 Linux/Android Compatibility
+
+**Cross-Platform Foundation Support**
+
+- Full Linux compilation support via swift-corelibs-foundation
+- Android ARM64 platform compatibility (verified via Swift Package Index)
+- Cross-platform email validation using Swift Regex with fallback for older platforms
+- Linux fallback implementations for Apple-only formatters
+
+**Platform Guards**
+
+- Added `#if canImport(CoreLocation)` guards for location-based extensions
+- Added `#if canImport(CoreGraphics)` guards for CGRect extensions
+- Added `#if canImport(SwiftUI)` guards for SwiftUI Color extensions
+- Added `#if canImport(Darwin)` guards for Apple-only formatters
+
+**Linux Fallback Functions** (simplified implementations without formatters)
+
+- `Double.secondsToTime(format:)` - Custom format string support with placeholders (%h, %m, %s, %02h, %02m, %02s)
+  ```swift
+  let formatted = 3665.0.secondsToTime(format: "%h hours, %m minutes, %s seconds")
+  // Result: "1 hours, 1 minutes, 5 seconds"
+  ```
+- `Double.day()`, `Double.month()`, `Double.year()` - Simple English time component formatting
+- `Int.day()`, `Int.month()`, `Int.year()` - Simple English plural/singular handling
+- All fallbacks maintain functional parity without complex locale formatting
+
+#### 🤖 CI/CD Enhancements
+
+**Linux Build Validation**
+
+- Added dedicated Linux build job to GitHub Actions workflow
+- Swift 6.0 on Ubuntu latest
+- Automatic testing on all platforms (iOS, macOS, Linux)
+
+**Workflow Optimization**
+
+- Updated `actions/checkout` from v4 to v6
+- Conditional job execution to reduce GitHub Actions minutes
+- Parallel test execution across platforms
+
+### Changed
+
+#### 🔄 Cross-Platform API Design
+
+**Email Validation**
+
+- Replaced NSPredicate-based validation (Apple-only) with cross-platform Swift Regex
+- Enhanced regex pattern to properly validate domain structure (prevents `a@b...com` false positives)
+- Runtime availability checks for modern Swift Regex (macOS 13+, iOS 16+) with fallback to `range(of:options:)`
+
+**Function Signature Differences**
+
+On Darwin platforms (Apple):
+```swift
+func secondsToTime(calendar: Calendar = .autoupdatingCurrent,
+                   units: NSCalendar.Unit = [.hour, .minute, .second],
+                   style: DateComponentsFormatter.UnitsStyle = .abbreviated,
+                   context: Formatter.Context = .listItem) -> String
+
+func day(style: DateComponentsFormatter.UnitsStyle = .abbreviated,
+         context: Formatter.Context = .listItem) -> String
+```
+
+On Linux platforms:
+```swift
+func secondsToTime(format: String? = nil) -> String
+
+func day() -> String
+```
+
+**Import Changes**
+
+- CGRect extensions: Changed from `CoreFoundation` to `CoreGraphics` (correct framework for CGRect/CGFloat types)
+- Explicit framework checks for all platform-specific functionality
+
+### Fixed
+
+- **Email Regex Validation**: Enhanced pattern to properly validate consecutive dots in domain names
+- **CoreGraphics Import**: Corrected import statement for CGRect extensions (was using wrong framework)
+- **Test Suite**: Updated 124 tests to handle platform-specific behavior with `#if canImport(Darwin)` checks
+- **Locale Support**: Made locale-dependent tests Darwin-only due to swift-corelibs-foundation limitations
+
+### Technical Details
+
+#### swift-corelibs-foundation Limitations
+
+The following Apple formatters are unavailable on Linux:
+- `DateComponentsFormatter` - Used for time component formatting (hours, minutes, seconds)
+- `MeasurementFormatter` - Used for distance, temperature, speed measurements
+- `RelativeDateTimeFormatter` - Used for "2 hours ago" style formatting
+
+**Impact**: Functions using these formatters are Darwin-only. Linux users get simplified fallback implementations.
+
+#### Platform-Specific Testing
+
+**Test Results (93 total tests):**
+- ✅ 92 passing (all core functionality, string, date, double extensions)
+- ⚠️ 1 expected failure (locale test for complex scripts - swift-corelibs-foundation limitation)
+
+**Platform Coverage:**
+- iOS/macOS/tvOS/watchOS/visionOS: Full feature set (124 tests)
+- Linux: Core features with simplified formatting (93 tests)
+
+#### Versioning Decision
+
+**Why 2.1.0 (MINOR) instead of 3.0.0 (MAJOR)?**
+
+- Linux is a **new platform** being added
+- **No breaking changes** for existing Apple platform users
+- API changes only affect new Linux users who had no previous API to break
+- Follows semantic versioning: MINOR = new functionality in backward-compatible manner
+
+### Migration Notes
+
+**For existing users (Apple platforms):** No changes required. All existing code continues to work identically.
+
+**For new Linux users:**
+- CoreLocation, CoreGraphics, and SwiftUI extensions are unavailable (Apple frameworks)
+- Time formatting functions have simplified signatures without formatter parameters
+- Measurement formatters (distance, temperature, speed) are Darwin-only
+- Relative date formatting is Darwin-only
+
+See [Migration Guide](#migration-guide-for-linux-users) below for platform-specific code examples.
+
+---
+
 ## [2.0.0] - 2025-12-04
 
 ### 🎉 Major Update - macOS Support & Testing Framework Migration
@@ -110,6 +243,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+#### 📦 Package Rename (BREAKING)
+
+**⚠️ Major Breaking Change:**
+- **Package renamed**: `RKiOSUtils` → `RKUtils`
+- **Repository URL changed**: Update your Package.swift dependencies
+- **Module split**: Single `RKiOSUtils` module split into:
+  - `RKUtils` (cross-platform Foundation utilities)
+  - `RKUtilsUI` (UIKit extensions for iOS/tvOS/visionOS)
+  - `RKUtilsMacOS` (AppKit extensions for macOS)
+
+**Impact**: All import statements must be updated. See [Migration Guide](#-from-100-to-200) below.
+
 #### 📁 File Organization
 
 - **Extracted NSSecureTextField** - Moved to dedicated file (NSSecureTextField.swift) for better code organization
@@ -195,6 +340,205 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## Migration Guide
+
+### 📱 From 1.0.0 to 2.0.0
+
+Version 2.0.0 introduces **breaking changes** that require updates to your project.
+
+#### Swift Version Requirement
+
+**Action Required:**
+
+- **Minimum Swift version**: 6.0+ (was 5.0+)
+- Update your project's Swift language version to 6.0 or later
+- Address any Swift 6.0 compatibility warnings (strict concurrency, etc.)
+
+#### Platform Requirements
+
+**Action Required:**
+
+Update minimum deployment targets:
+
+| Platform | v1.0.0 | v2.0.0 | Change |
+|----------|--------|--------|--------|
+| iOS | 11.0+ | 13.0+ | ⚠️ **+2 versions** |
+| macOS | N/A | 10.15+ | ✅ **New platform** |
+| tvOS | N/A | 13.0+ | ℹ️ Now explicit |
+| watchOS | N/A | 6.0+ | ℹ️ Now explicit |
+| visionOS | N/A | 1.0+ | ✅ **New platform** |
+
+**In your app's Xcode project:**
+1. Select your target
+2. Go to "General" > "Minimum Deployments"
+3. Update iOS to at least 13.0
+
+#### Package Rename and Structure Changes
+
+**⚠️ BREAKING CHANGE: Package renamed from `RKiOSUtils` to `RKUtils`**
+
+**Action Required:**
+
+Update your `Package.swift` imports:
+
+**Before (v1.0.0):**
+```swift
+dependencies: [
+    .package(url: "https://github.com/TheRakiburKhan/RKiOSUtils.git", from: "1.0.0")
+]
+
+.target(
+    name: "YourTarget",
+    dependencies: ["RKiOSUtils"]  // Old package name
+)
+```
+
+**After (v2.0.0):**
+```swift
+dependencies: [
+    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "2.0.0")  // New repository name
+]
+
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "RKUtils", package: "RKUtils"),      // Core utilities
+        .product(name: "RKUtilsUI", package: "RKUtils"),    // UIKit (iOS/tvOS)
+        // Optional: .product(name: "RKUtilsMacOS", package: "RKUtils"), // AppKit (macOS)
+    ]
+)
+```
+
+**In your Swift files:**
+
+If you only use Foundation extensions (String, Date, Int, Double, Bundle):
+```swift
+// Before (v1.0.0):
+import RKiOSUtils  // Old name
+
+// After (v2.0.0):
+import RKUtils  // New name - ⚠️ RENAME REQUIRED
+```
+
+If you use UIKit extensions (UIView, UIColor, UITextField):
+```swift
+// Before (v1.0.0):
+import RKiOSUtils  // Old name - single import for everything
+
+// After (v2.0.0):
+import RKUtilsUI  // New name + separate target - ⚠️ RENAME REQUIRED
+```
+
+If you're targeting macOS (new in 2.0.0):
+```swift
+import RKUtilsMacOS  // For NSView, NSColor, NSTextField, etc.
+```
+
+**Summary of import changes:**
+- `RKiOSUtils` → `RKUtils` (for Foundation extensions)
+- `RKiOSUtils` → `RKUtilsUI` (for UIKit extensions)
+- New: `RKUtilsMacOS` (for AppKit extensions)
+
+#### Test Framework (If Using)
+
+If you were using the test suite as reference:
+
+**Before (v1.0.0):** XCTest
+```swift
+import XCTest
+
+class MyTests: XCTestCase {
+    func testExample() {
+        XCTAssertEqual(value, expected)
+    }
+}
+```
+
+**After (v2.0.0):** Swift Testing
+```swift
+import Testing
+
+@Suite("My Tests")
+struct MyTests {
+    @Test("Example test")
+    func example() {
+        #expect(value == expected)
+    }
+}
+```
+
+#### No Code Changes Required For:
+
+✅ All Foundation extensions (String, Date, Int, Double, Bundle, Data)
+✅ All UIKit extension APIs remain identical (just different import)
+✅ CLLocationCoordinate2D extensions
+✅ CGRect extensions
+
+### 🐧 For Linux Users (v2.1.0+)
+
+#### Platform-Specific Code
+
+When targeting both Apple platforms and Linux, use platform guards:
+
+```swift
+import RKUtils
+
+#if canImport(Darwin)
+// Apple platforms: Full formatter support
+let formatted = 3665.0.secondsToTime(style: .abbreviated)
+// Result: "1h 1m 5s" (localized)
+#else
+// Linux: Simple formatting or custom format
+let formatted = 3665.0.secondsToTime()
+// Result: "1:01:05"
+
+// Or with custom format
+let custom = 3665.0.secondsToTime(format: "%h hours, %m minutes")
+// Result: "1 hours, 1 minutes"
+#endif
+```
+
+#### Unavailable on Linux
+
+These extensions are Apple-framework-only and won't compile on Linux:
+
+```swift
+#if canImport(CoreLocation)
+// Location-based features (Apple only)
+let bearing = location1.bearing(to: location2)
+#endif
+
+#if canImport(CoreGraphics)
+// CGRect extensions (Apple only)
+let minSide = rect.minEdge
+#endif
+
+#if canImport(SwiftUI)
+// SwiftUI Color extensions (Apple only)
+let color = Color(hexString: "#FF5733")
+#endif
+
+#if canImport(Darwin)
+// Measurement formatters (Apple only)
+let distance = 1000.0.distance()  // "1.0 km"
+let temp = 25.0.temperature()     // "25.0°C"
+let relativeTime = date.relativeTime()  // "2 hours ago"
+#endif
+```
+
+#### Cross-Platform Examples
+
+Email validation works everywhere:
+```swift
+// Works on all platforms (Apple + Linux)
+let isValid = "test@example.com".isValidEmail  // true
+```
+
+Basic formatting works everywhere:
+```swift
+// Works on all platforms
+let rounded = 3.14159.roundedString(toPlaces: 2)  // "3.14"
+let clamped = 15.0.clamped(min: 0, max: 10)  // 10.0
+```
 
 ### 🔄 From UIKit to AppKit
 
@@ -311,6 +655,7 @@ struct NSViewTests {
 - [Documentation](https://github.com/TheRakiburKhan/RKUtils/wiki)
 - [Report Issues](https://github.com/TheRakiburKhan/RKUtils/issues)
 
-[Unreleased]: https://github.com/TheRakiburKhan/RKUtils/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/TheRakiburKhan/RKUtils/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.1.0
 [2.0.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.0.0
 [1.0.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v1.0.0
