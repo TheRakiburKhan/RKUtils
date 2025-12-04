@@ -74,15 +74,16 @@ public extension Date {
         return formatter.string(from: self)
     }
     
+    #if canImport(Darwin)
     /**
      Returns a human-readable relative time string (e.g. "2d ago", "in 3h").
-     
+
      - Parameters:
         - referanceDate: The reference date to compare to. Defaults to now.
         - context: The formatting context (e.g. `.listItem`, `.standalone`).
         - style: The date-time style (e.g. `.numeric`, `.named`).
         - unitStyle: The style of the units (e.g. `.abbreviated`, `.full`).
-     
+
      - Returns: A localized relative time string.
      */
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -91,13 +92,14 @@ public extension Date {
         formatter.formattingContext = context
         formatter.dateTimeStyle = style
         formatter.unitsStyle = unitStyle
-        
+
         if let calendar = calendar {
             formatter.calendar = calendar
         }
-        
+
         return formatter.localizedString(for: self, relativeTo: referanceDate)
     }
+    #endif
     
     /**
      Returns the distance between `self` and `referanceDate` in the specified calendar component.
