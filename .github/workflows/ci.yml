@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache SPM dependencies
         uses: actions/cache@v4
@@ -56,10 +56,15 @@ jobs:
     name: Build for iOS
     runs-on: macos-latest
     timeout-minutes: 20
+    if: >
+      contains(github.event.head_commit.modified, 'Sources/RKUtilsUI/') ||
+      contains(github.event.head_commit.modified, 'Sources/RKUtilsSwiftUI/') ||
+      contains(github.event.head_commit.modified, 'Package.swift') ||
+      github.event_name == 'pull_request'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache SPM dependencies
         uses: actions/cache@v4
@@ -122,10 +127,14 @@ jobs:
     name: Build for macOS
     runs-on: macos-latest
     timeout-minutes: 20
+    if: >
+      contains(github.event.head_commit.modified, 'Sources/RKUtilsMacOSUI/') ||
+      contains(github.event.head_commit.modified, 'Package.swift') ||
+      github.event_name == 'pull_request'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache SPM dependencies
         uses: actions/cache@v4
@@ -146,6 +155,41 @@ jobs:
             -sdk macosx \
             -destination "platform=macOS"
 
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.0"
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Build RKUtils (cross-platform target)
+        run: |
+          echo "Building RKUtils target for Linux"
+          swift build --product RKUtils -v
+
+      - name: Run RKUtils tests
+        run: |
+          echo "Running RKUtils tests on Linux"
+          swift test --filter RKUtilsTests
+
   validate:
     name: Package Validation
     runs-on: macos-latest
@@ -153,7 +197,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Validate Package.swift
         run: |
@@ -175,8 +219,8 @@ jobs:
   summary:
     name: Build Summary
     runs-on: macos-latest
-    needs: [test, build-ios, build-macos, validate]
-    if: always()
+    needs: [test, build-ios, build-macos, build-linux, validate]
+    if: always() && !cancelled()
 
     steps:
       - name: Generate summary
@@ -195,4 +239,5 @@ jobs:
           echo "| Tests (124 tests) | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| iOS Build | ${{ needs.build-ios.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| macOS Build | ${{ needs.build-macos.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linux Build | ${{ needs.build-linux.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Package Validation | ${{ needs.validate.result }} |" >> $GITHUB_STEP_SUMMARY

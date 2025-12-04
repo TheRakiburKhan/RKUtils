@@ -40,15 +40,17 @@ public extension Int {
         return formatter
     }
     
+    #if canImport(Darwin)
     private func dateComponentsFormatter(units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
-        
+
         formatter.allowedUnits = units
         formatter.unitsStyle = style
         formatter.formattingContext = context
-        
+
         return formatter
     }
+    #endif
     
     /**
      Converts the Double to a percentage string (e.g., "25%").
@@ -251,31 +253,52 @@ public extension Int {
     }
 }
 
+#if canImport(Darwin)
 public extension Int {
     func day(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(day: self)
         let formatter = dateComponentsFormatter(units: [.day], style: style, context: context)
-        
+
         return formatter.string(from: components) ?? self.toLocal()
     }
-    
+
     func month(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(month: self)
         let formatter = dateComponentsFormatter(units: [.month], style: style, context: context)
-        
+
         return formatter.string(from: components) ?? self.toLocal()
     }
-    
+
     func year(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(year: self)
         let formatter = dateComponentsFormatter(units: [.year], style: style, context: context)
-        
+
         return formatter.string(from: components) ?? self.toLocal()
     }
-    
+}
+#else
+public extension Int {
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    func day() -> String {
+        return "\(self) day\(self == 1 ? "" : "s")"
+    }
+
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    func month() -> String {
+        return "\(self) month\(self == 1 ? "" : "s")"
+    }
+
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    func year() -> String {
+        return "\(self) year\(self == 1 ? "" : "s")"
+    }
+}
+#endif
+
+public extension Int {
     /**
      Converts UNIX time to `Date`
-     
+
     - Returns: `Optional<Date>` aka `Date?`
      */
     func toDate() -> Date? {

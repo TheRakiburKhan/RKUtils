@@ -26,19 +26,30 @@ import Testing
         let value = 1234567
 
         let enUS = Locale(identifier: "en_US")
+        let enResult = value.toLocal(locale: enUS)
+
+        #expect(enResult == "1,234,567") // English (US)
+
+        #if canImport(Darwin)
+        // Darwin has full locale support for complex scripts
         let arSA = Locale(identifier: "ar_SA")
         let hiIN = Locale(identifier: "hi_IN")
         let bnBD = Locale(identifier: "bn_BD")
 
-        let enResult = value.toLocal(locale: enUS)
         let arResult = value.toLocal(locale: arSA)
         let hiResult = value.toLocal(locale: hiIN)
         let bnResult = value.toLocal(locale: bnBD)
 
-        #expect(enResult == "1,234,567") // English (US)
         #expect(arResult != enResult) // Should be localized digits/separators
         #expect(hiResult != enResult) // Hindi numerals/local formatting
         #expect(bnResult != enResult) // Bengali numerals/local formatting
+        #else
+        // Linux: swift-corelibs-foundation has limited locale support
+        // Just verify that locale parameter doesn't crash
+        let frFR = Locale(identifier: "fr_FR")
+        let frResult = value.toLocal(locale: frFR)
+        #expect(!frResult.isEmpty)
+        #endif
     }
 
     @Test("toPositiveSuffix formats numbers with suffix at intervals")

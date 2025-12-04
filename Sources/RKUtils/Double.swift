@@ -137,100 +137,103 @@ public extension Double {
     }
 }
 
+#if canImport(Darwin)
 // MARK: Measurement Formatting
 public extension Double {
     /**
      Formats a Double as a distance value (e.g., meters, kilometers).
-     
+
      - Parameters:
         - baseUnit: Unit of measurement (default is meters).
         - unitStyle: Display style (e.g., .short, .medium).
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-     
+
      - Returns: A localized distance string.
      */
     func distance(baseUnit: UnitLength = .meters, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
-    
+
     /**
      Formats the Double as a duration (e.g., minutes, hours).
-     
+
      - Parameters:
         - baseUnit: Duration unit (default is `.minutes`).
         - unitStyle: Formatter style.
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-     
+
      - Returns: A formatted duration string.
      */
     func time(baseUnit: UnitDuration = .minutes, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
-    
+
     /**
      Formats the Double as a temperature value in Kelvin.
-     
+
      - Parameters:
         - baseUnit: Temperature Unit (default is `.kelvin`).
         - unitStyle: Display style.
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-     
+
      - Returns: A temperature-formatted string.
      */
     func temperature(baseUnit: UnitTemperature = .kelvin, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
-    
+
     /**
      Formats the Double as a speed value in metersPerSecond.
-     
+
      - Parameters:
         - baseUnit: Speed Unit (default is `.metersPerSecond`).
         - unitStyle: Display style.
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-     
+
      - Returns: A speed-formatted string.
      */
     func speed(baseUnit: UnitSpeed = .metersPerSecond, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
 }
+#endif
 
+#if canImport(Darwin)
 // MARK: Time Components
 public extension Double {
     /**
      Converts seconds into a readable time format (e.g., "1h 3m").
-     
+
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - units: Allowed time components.
         - style: Output format style.
         - context: Formatting context.
-     
+
      - Returns: A time-formatted string.
      */
     func secondsToTime(calendar: Calendar = .autoupdatingCurrent, units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let formatter = dateComponentsFormatter(calendar: calendar, units: units, style: style, context: context)
-        
+
         return formatter.string(from: self) ?? "\(self)s"
     }
-    
+
     /**
      Converts a number to a day count string.
-     
+
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
-     
+
      - Returns: A day-formatted string.
      */
     func day(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
@@ -238,15 +241,15 @@ public extension Double {
         let formatter = dateComponentsFormatter(calendar: calendar, units: [.day], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
-    
+
     /**
      Converts a number to a month count string.
-     
+
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
-     
+
      - Returns: A month-formatted string.
      */
     func month(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
@@ -254,15 +257,15 @@ public extension Double {
         let formatter = dateComponentsFormatter(calendar: calendar, units: [.month], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
-    
+
     /**
      Converts a number to a year count string.
-     
+
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
-     
+
      - Returns: A year-formatted string.
      */
     func year(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
@@ -271,6 +274,57 @@ public extension Double {
         return formatter.string(from: components) ?? toLocal()
     }
 }
+#else
+// MARK: Time Components
+public extension Double {
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    // Format placeholders: %h (hours), %m (minutes), %s (seconds)
+    // Use %02d style for zero-padding: e.g., "%h:%02m:%02s" -> "1:05:09"
+    func secondsToTime(format: String? = nil) -> String {
+        let totalSeconds = Int(self)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+
+        // If custom format provided, use it
+        if let customFormat = format {
+            var result = customFormat
+            result = result.replacingOccurrences(of: "%h", with: "\(hours)")
+            result = result.replacingOccurrences(of: "%02h", with: String(format: "%02d", hours))
+            result = result.replacingOccurrences(of: "%m", with: "\(minutes)")
+            result = result.replacingOccurrences(of: "%02m", with: String(format: "%02d", minutes))
+            result = result.replacingOccurrences(of: "%s", with: "\(seconds)")
+            result = result.replacingOccurrences(of: "%02s", with: String(format: "%02d", seconds))
+            return result
+        }
+
+        // Default format
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%d:%02d", minutes, seconds)
+        }
+    }
+
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    func day() -> String {
+        let days = Int(self)
+        return "\(days) day\(days == 1 ? "" : "s")"
+    }
+
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    func month() -> String {
+        let months = Int(self)
+        return "\(months) month\(months == 1 ? "" : "s")"
+    }
+
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    func year() -> String {
+        let years = Int(self)
+        return "\(years) year\(years == 1 ? "" : "s")"
+    }
+}
+#endif
 
 // MARK: Math / Logic
 public extension Double {
@@ -402,6 +456,7 @@ private extension Double {
         return formatter
     }
     
+    #if canImport(Darwin)
     func dateComponentsFormatter(calendar: Calendar, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
         formatter.calendar = calendar
@@ -410,14 +465,15 @@ private extension Double {
         formatter.formattingContext = context
         return formatter
     }
-    
+
     func measurementString<T: Dimension>(unit: T, unitStyle: Formatter.UnitStyle, minFraction: Int?, maxFraction: Int?, groupSize: Int?) -> String {
         let measurement = Measurement(value: self, unit: unit)
         let formatter = MeasurementFormatter()
         formatter.unitStyle = unitStyle
         formatter.unitOptions = .naturalScale
         formatter.numberFormatter = numberFormatter(minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
-        
+
         return formatter.string(from: measurement)
     }
+    #endif
 }
