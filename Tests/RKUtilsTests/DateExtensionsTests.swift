@@ -80,28 +80,29 @@ struct DateExtensionsTests {
     }
 
     // MARK: - Relative Time Tests
-
+#if canImport(Darwin)
     @Test("Relative time in future")
     func relativeTimeFuture() {
         let now = Date()
         let futureDate = now.addingTimeInterval(3600) // 1 hour from now
-
+        
         let result = futureDate.relativeTime(to: now)
-
+        
         #expect(!result.isEmpty)
         #expect(result.contains("1") || result.lowercased().contains("hour"))
     }
-
+    
     @Test("Relative time in past")
     func relativeTimePast() {
         let now = Date()
         let pastDate = now.addingTimeInterval(-7200) // 2 hours ago
-
+        
         let result = pastDate.relativeTime(to: now)
-
+        
         #expect(!result.isEmpty)
         #expect(result.contains("2") || result.lowercased().contains("hour"))
     }
+#endif
 
     // MARK: - Distance Tests
 

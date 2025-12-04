@@ -5,6 +5,7 @@
 //  Created by Rakibur Khan on 1/6/25.
 //
 
+#if canImport(CoreLocation)
 import Testing
 import CoreLocation
 @testable import RKUtils
@@ -118,3 +119,4 @@ struct CLLocationCoordinate2DExtensionsTests {
         #expect(bearing < 180.0)
     }
 }
+#endif

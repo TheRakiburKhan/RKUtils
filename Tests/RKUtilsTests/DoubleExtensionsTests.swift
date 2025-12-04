@@ -77,8 +77,9 @@ import Testing
         #expect(2_500_000_000.0.abbreviated().contains("2") && 2_500_000_000.0.abbreviated().contains("B"))
     }
 
-    // MARK: - Measurement Formatting Tests
+    // MARK: - Measurement Formatting Tests (Darwin only)
 
+    #if canImport(Darwin)
     @Test("distance formats numbers as distance measurements")
     func distance() {
         let meters = 1000.0
@@ -112,6 +113,7 @@ import Testing
 
         #expect(!result.isEmpty)
     }
+    #endif
 
     // MARK: - Time Component Tests
 
@@ -120,7 +122,27 @@ import Testing
         let seconds = 3665.0 // 1 hour, 1 minute, 5 seconds
         let result = seconds.secondsToTime()
 
+        #if canImport(Darwin)
+        // Darwin: Uses DateComponentsFormatter
         #expect(result.contains("1") || result.contains("hr") || result.contains("h"))
+        #else
+        // Linux: Simple HH:MM:SS or MM:SS format
+        #expect(result == "1:01:05")
+        #endif
+    }
+
+    @Test("secondsToTime with custom format (Linux only)")
+    func secondsToTimeCustomFormat() {
+        #if !canImport(Darwin)
+        let seconds = 3665.0 // 1 hour, 1 minute, 5 seconds
+        let result = seconds.secondsToTime(format: "%h hours, %m minutes, %s seconds")
+
+        #expect(result == "1 hours, 1 minutes, 5 seconds")
+
+        // Test zero-padded format
+        let resultPadded = seconds.secondsToTime(format: "%02h:%02m:%02s")
+        #expect(resultPadded == "01:01:05")
+        #endif
     }
 
     @Test("day formats numbers as day measurements")
@@ -129,7 +151,13 @@ import Testing
         let result = days.day()
 
         #expect(!result.isEmpty)
-        #expect(result.contains("5") || result.contains("day"))
+        #if canImport(Darwin)
+        // Darwin: Localized format (e.g., "5d" or "5 days")
+        #expect(result.contains("5"))
+        #else
+        // Linux: Simple "5 days" format
+        #expect(result == "5 days")
+        #endif
     }
 
     @Test("month formats numbers as month measurements")
@@ -138,7 +166,13 @@ import Testing
         let result = months.month()
 
         #expect(!result.isEmpty)
-        #expect(result.contains("3") || result.contains("mo"))
+        #if canImport(Darwin)
+        // Darwin: Localized format (e.g., "3mo" or "3 months")
+        #expect(result.contains("3"))
+        #else
+        // Linux: Simple "3 months" format
+        #expect(result == "3 months")
+        #endif
     }
 
     @Test("year formats numbers as year measurements")
@@ -147,7 +181,23 @@ import Testing
         let result = years.year()
 
         #expect(!result.isEmpty)
-        #expect(result.contains("2") || result.contains("yr") || result.contains("year"))
+        #if canImport(Darwin)
+        // Darwin: Localized format (e.g., "2yr" or "2 years")
+        #expect(result.contains("2"))
+        #else
+        // Linux: Simple "2 years" format
+        #expect(result == "2 years")
+        #endif
+    }
+
+    @Test("singular forms work correctly")
+    func singularForms() {
+        #if !canImport(Darwin)
+        // Linux fallback uses simple English pluralization
+        #expect(1.0.day() == "1 day")
+        #expect(1.0.month() == "1 month")
+        #expect(1.0.year() == "1 year")
+        #endif
     }
 
     // MARK: - Math / Logic Tests
