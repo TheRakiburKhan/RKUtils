@@ -63,7 +63,7 @@ let package = Package(
         ),
         .testTarget(
             name: "RKUtilsUITests",
-            dependencies: ["RKUtils", "RKUtilsUI"]
+            dependencies: ["RKUtils", "RKUtilsUI", "RKUtilsSwiftUI"]
         ),
         .testTarget(
             name: "RKUtilsMacOSTests",
