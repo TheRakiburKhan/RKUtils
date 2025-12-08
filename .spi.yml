@@ -1,5 +1,31 @@
 version: 1
 builder:
   configs:
+    # iOS - Full feature set
     - platform: ios
+      scheme: RKUtils-Package
+      documentation_targets: [RKUtils, RKUtilsUI, RKUtilsSwiftUI]
+
+    # macOS - Full feature set with AppKit
+    - platform: macos
+      scheme: RKUtils-Package
+      documentation_targets: [RKUtils, RKUtilsMacOS, RKUtilsSwiftUI]
+
+    # tvOS - UIKit support
+    - platform: tvos
+      scheme: RKUtils-Package
+      documentation_targets: [RKUtils, RKUtilsUI]
+
+    # watchOS - Core utilities only
+    - platform: watchos
+      scheme: RKUtils-Package
+      documentation_targets: [RKUtils, RKUtilsSwiftUI]
+
+    # visionOS - UIKit support
+    - platform: visionos
+      scheme: RKUtils-Package
+      documentation_targets: [RKUtils, RKUtilsUI, RKUtilsSwiftUI]
+
+    # Linux - Core utilities only (no UI frameworks)
+    - platform: linux
       documentation_targets: [RKUtils]
