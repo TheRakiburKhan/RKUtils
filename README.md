@@ -7,37 +7,23 @@
   <img src="https://img.shields.io/badge/SPM-Compatible-brightgreen.svg" alt="SPM">
 </p>
 
-**RKUtils** is a comprehensive, cross-platform Swift package offering a rich collection of extensions and utilities for UIKit, AppKit, and Foundation. Built for developers who value clean code, type safety, and productivity across Apple platforms and Linux.
+A comprehensive, cross-platform Swift package with extensions and utilities for UIKit, AppKit, and Foundation.
 
-## ✨ Highlights
+## Features
 
-- 🌐 **Full Cross-Platform Support** - iOS, macOS, tvOS, watchOS, visionOS, Linux
-- 🎨 **UIKit & AppKit Parity** - Consistent APIs across Apple platforms
-- 🐧 **Linux Compatible** - Core utilities work on Linux via swift-corelibs-foundation
-- 🧪 **124 Tests** - Comprehensive test coverage with Swift Testing
+- 🌐 **Cross-Platform** - Works on iOS, macOS, tvOS, watchOS, visionOS, and Linux
+- 🎨 **UIKit & AppKit** - Consistent APIs with platform parity
 - 📦 **Zero Dependencies** - Lightweight and efficient
-- 🔧 **Type-Safe** - Leverage Swift's type system for safer code
-- 🚀 **Production Ready** - Battle-tested extensions
+- 🧪 **Well Tested** - Comprehensive test coverage
+- 🚀 **Production Ready** - Battle-tested in production apps
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Swift Package Manager
 
-#### Using Xcode:
-
-1. Open your project in Xcode
-2. Go to **File > Add Package Dependencies...**
-3. Enter the repository URL:
-
-```
-https://github.com/TheRakiburKhan/RKUtils.git
-```
-
-4. Select the version and add to your target
-
-#### Using Package.swift:
+Add to your `Package.swift`:
 
 ```swift
 dependencies: [
@@ -45,418 +31,153 @@ dependencies: [
 ]
 ```
 
-Then add the appropriate target to your dependencies:
+### Xcode
+
+1. **File > Add Package Dependencies...**
+2. Enter: `https://github.com/TheRakiburKhan/RKUtils.git`
+3. Select version and add to your target
+
+### Targets
 
 ```swift
 .target(
     name: "YourTarget",
     dependencies: [
-        .product(name: "RKUtils", package: "RKUtils"),          // Cross-platform utilities
-        .product(name: "RKUtilsUI", package: "RKUtils"),        // UIKit (iOS/tvOS/visionOS)
-        .product(name: "RKUtilsMacOS", package: "RKUtils"),     // AppKit (macOS)
+        .product(name: "RKUtils", package: "RKUtils"),       // Cross-platform
+        .product(name: "RKUtilsUI", package: "RKUtils"),     // UIKit (iOS/tvOS)
+        .product(name: "RKUtilsMacOS", package: "RKUtils"),  // AppKit (macOS)
     ]
 )
 ```
 
 ---
 
-## 🎯 Features
+## Quick Examples
 
-### 🍎 iOS/tvOS/visionOS (UIKit)
+### Foundation Extensions
 
-#### UIView Extensions
+```swift
+import RKUtils
+
+// String
+"test@example.com".isValidEmail  // true
+"2024-12-08".toDate(format: "yyyy-MM-dd")
+
+// Date
+Date().toString(format: "yyyy-MM-dd")
+Date().addingDays(7)
+Date().relativeTime()  // "2 hours ago" (Apple only)
+
+// Numbers
+1234.abbreviated  // "1.2K"
+3.14159.roundedString(toPlaces: 2)  // "3.14"
+10.times { print("Hello") }
+
+// Bundle
+Bundle.main.appVersion  // "1.0.0"
+Bundle.main.displayName
+```
+
+### UIKit (iOS/tvOS/visionOS)
 
 ```swift
 import RKUtilsUI
 
-// Corner radius & rounding
+// UIView styling
 view.setCornerRadius(cornerRadius: 10)
-view.roundedCorner(corners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], radius: 15)
-view.rounded()  // Perfect circle
-
-// Borders
-view.setBorder(width: 2, color: .red, background: .white, radius: 8)
-
-// Shadows
-view.setShadow(color: .black, offset: CGSize(width: 0, height: 2), opacity: 0.3, radius: 4)
-
-// Gradients
-view.setLinearGradientBackground(
-    colors: [.systemBlue, .systemPurple],
-    startPoint: CGPoint(x: 0, y: 0),
-    endPoint: CGPoint(x: 1, y: 1)
-)
-
-// Blur effects
+view.setBorder(width: 2, color: .red)
+view.setShadow(color: .black, opacity: 0.3, radius: 4)
+view.setLinearGradientBackground(colors: [.blue, .purple])
 view.applyBlurEffect(style: .regular)
 
-// Animations
-view.showViewWithAnimation(isHidden: false)
-```
-
-#### UIColor Extensions
-
-```swift
-// Hex color initialization
+// UIColor
 let color = UIColor(hexString: "#FF5733")
-let colorWithAlpha = UIColor(hexString: "#FF5733", alpha: 0.8)
-```
 
-#### UITextField Extensions
-
-```swift
-// Secure text toggle with eye icon
+// UITextField
 textField.setSecureTextToggleToRight(.systemBlue)
-
-// Text change publisher (Combine)
-textField.textPublisher()
-    .sink { text in
-        print("Text changed: \(text)")
-    }
-
-// Padding
+textField.textPublisher().sink { text in print(text) }
 textField.setLeftPaddingPoints(16)
-textField.setRightPaddingPoints(16)
 ```
 
-#### CGRect Extensions
-
-```swift
-let rect = CGRect(x: 0, y: 0, width: 100, height: 50)
-let minSide = rect.minEdge  // Returns 50
-```
-
----
-
-### 🖥️ macOS (AppKit)
-
-#### NSView Extensions
+### AppKit (macOS)
 
 ```swift
 import RKUtilsMacOS
 
-// Identical API to UIView!
+// NSView - Same API as UIView!
 view.setCornerRadius(cornerRadius: 10)
-view.roundedCorner(corners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], radius: 15)
-view.rounded()
+view.setBorder(width: 2, color: .red)
+view.setShadow(color: .black, opacity: 0.3, radius: 4)
+view.applyBlurEffect(material: .contentBackground)
 
-// Borders
-view.setBorder(width: 2, color: .red, background: .white, radius: 8)
-
-// Shadows
-view.setShadow(color: .black, offset: CGSize(width: 0, height: 2), opacity: 0.3, radius: 4)
-
-// Gradients
-view.setLinearGradientBackground(
-    colors: [.systemBlue, .systemPurple],
-    startPoint: CGPoint(x: 0, y: 0),
-    endPoint: CGPoint(x: 1, y: 1)
-)
-
-// Blur effects with AppKit materials
-view.applyBlurEffect(material: .contentBackground, blendingMode: .behindWindow)
-
-// Animations
-view.showViewWithAnimation(isHidden: false)
-```
-
-#### NSColor Extensions
-
-```swift
-// Hex color initialization (same as UIColor)
+// NSColor
 let color = NSColor(hexString: "#FF5733")
-let colorWithAlpha = NSColor(hexString: "#FF5733", alpha: 0.8)
-```
 
-#### NSSecureTextField Extensions
-
-```swift
-// Password field with show/hide toggle
+// NSSecureTextField
 secureTextField.setSecureTextToggleToRight(.systemBlue)
-// Adds eye icon button, uses SF Symbols on macOS 11.0+
-```
 
-#### NSTextField Extensions
-
-```swift
-// Text change publisher (Combine)
-textField.textPublisher()
-    .sink { text in
-        print("Text changed: \(text)")
-    }
-```
-
-#### NSCollectionView & NSTableView
-
-```swift
-// Type-safe cell registration
-collectionView.register(cell: MyCell.self)
-tableView.register(cell: MyTableCell.self)
-
-// Type-safe dequeue
-let cell = tableView.dequeueReusableCell(cell: MyTableCell.self, owner: self)
+// Type-safe registration
+tableView.register(cell: MyCell.self)
+let cell = tableView.dequeueReusableCell(cell: MyCell.self, owner: self)
 ```
 
 ---
 
-### 🌐 Cross-Platform (All Platforms)
+## Platform Requirements
 
-#### String Extensions
+| Platform | Version | Features |
+|----------|---------|----------|
+| iOS | 13.0+ | Full |
+| macOS | 10.15+ | Full |
+| tvOS | 13.0+ | Full |
+| watchOS | 6.0+ | Full |
+| visionOS | 1.0+ | Full |
+| Linux | Any | Core utilities* |
 
-```swift
-// Email validation
-"test@example.com".isValidEmail  // true
+**Swift:** 6.0+ | **Xcode:** 16.0+
 
-// Date parsing
-let date = "2024-12-03".toDate(format: "yyyy-MM-dd")
+<details>
+<summary><b>*Linux Limitations</b></summary>
 
-// Base64 encoding
-let encoded = "Hello World".base64Encoded
-```
+Unavailable on Linux (Apple frameworks only):
+- CoreLocation (CLLocationCoordinate2D)
+- CoreGraphics (CGRect)
+- SwiftUI (Color)
+- Advanced formatters (measurements, relative dates)
 
-#### Date Extensions
-
-```swift
-let date = Date()
-
-// Formatting
-date.toString(format: "yyyy-MM-dd")  // "2024-12-03"
-date.readable(dateStyle: .medium, timeStyle: .short)  // "Dec 3, 2024 at 2:30 PM"
-
-// Manipulation
-date.addingDays(7)
-date.subtractingMonths(2)
-
-// Relative time
-date.relativeTime()  // "2 hours ago"
-
-// Week dates
-Date.currentWeekDates()  // Array of dates for current week
-```
-
-#### Int Extensions
-
-```swift
-let number = 42
-
-// Formatting
-number.abbreviated  // "42"
-1200.abbreviated  // "1.2K"
-2500000.abbreviated  // "2.5M"
-
-// Localization
-1234.toLocal(locale: Locale(identifier: "en_US"))  // "1,234"
-
-// Word conversion
-5.inWords  // "five"
-
-// Utilities
-10.times { print("Hello") }  // Prints "Hello" 10 times
-```
-
-#### Double Extensions
-
-```swift
-let value = 3.14159
-
-// Formatting
-value.roundedString(toPlaces: 2)  // "3.14"
-value.percentage()  // "314.16%"
-value.currency(code: "USD")  // "$3.14"
-
-// Measurements
-25.5.temperature(unit: .celsius)  // "25.5°C"
-100.0.distance(unit: .kilometers)  // "100.0 km"
-60.0.speed(unit: .kilometersPerHour)  // "60.0 km/h"
-
-// Math utilities
-value.clamped(to: 0.0...10.0)  // Clamps value to range
-value.lerp(to: 10.0, by: 0.5)  // Linear interpolation
-```
-
-#### Bundle Extensions
-
-```swift
-// App information
-Bundle.main.appVersion  // "1.0.0"
-Bundle.main.buildNumber  // "42"
-Bundle.main.displayName  // "MyApp"
-```
-
-#### CLLocationCoordinate2D Extensions
-
-```swift
-let london = CLLocationCoordinate2D(latitude: 51.5074, longitude: -0.1278)
-let paris = CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522)
-
-// Calculate bearing
-let bearing = london.bearing(to: paris)  // Direction in degrees
-```
-
-#### Data Extensions
-
-```swift
-let data = Data()
-
-// String conversion
-data.appendString("Hello")
-data.appendStrings(["Hello", "World"])
-```
+Linux gets simplified fallbacks for time formatting. See [CHANGELOG](CHANGELOG.md) for details.
+</details>
 
 ---
 
-## 📱 Platform Requirements
+## Documentation
 
-| Platform    | Minimum Version   | Notes                                   |
-| ----------- | ----------------- | --------------------------------------- |
-| iOS         | 13.0+             | Full feature set                        |
-| macOS       | 10.15+ (Catalina) | Full feature set                        |
-| tvOS        | 13.0+             | Full feature set                        |
-| watchOS     | 6.0+              | Full feature set                        |
-| visionOS    | 1.0+              | Full feature set                        |
-| macCatalyst | 13.0+             | Full feature set                        |
-| Linux       | Any               | Core utilities (see limitations below) |
+- 📖 **[CHANGELOG](CHANGELOG.md)** - Version history and migration guides
+- 📚 **[Wiki](https://github.com/TheRakiburKhan/RKUtils/wiki)** - Detailed documentation
+- 🐛 **[Issues](https://github.com/TheRakiburKhan/RKUtils/issues)** - Report bugs or request features
 
-**Swift Version:** 6.0+
-**Xcode Version:** 16.0+ (for Apple platforms)
-
-### Linux Limitations
-
-On Linux, the following features are **unavailable** (Apple frameworks only):
-- CoreLocation extensions (CLLocationCoordinate2D)
-- CoreGraphics extensions (CGRect)
-- SwiftUI extensions (Color)
-- Measurement formatters (distance, temperature, speed)
-- Relative date formatting ("2 hours ago")
-
-Linux users get simplified fallback implementations for time formatting functions. See [CHANGELOG.md](CHANGELOG.md) for platform-specific API differences.
+All extensions include inline documentation. Use Xcode's Quick Help (⌥ + Click) for details.
 
 ---
 
-## 🎨 Architecture
+## Contributing
 
-RKUtils is organized into three main targets:
-
-### `RKUtils` (Cross-Platform)
-
-Core utilities that work on **all platforms** (Apple + Linux):
-
-- String, Date, Int, Double extensions
-- Bundle helpers
-- Data extensions
-
-**Platform-specific (Apple only):**
-- CLLocationCoordinate2D utilities (requires CoreLocation)
-- CGRect utilities (requires CoreGraphics)
-- Color utilities (requires SwiftUI)
-
-### `RKUtilsUI` (UIKit Platforms)
-
-UIKit-specific extensions for iOS, tvOS, visionOS, and macCatalyst:
-
-- UIView, UIColor, UITextField
-
-### `RKUtilsMacOS` (AppKit Platform)
-
-AppKit-specific extensions for macOS:
-
-- NSView, NSColor, NSTextField, NSSecureTextField
-- NSCollectionView, NSTableView helpers
-
-**Philosophy:** Maximum code reuse with platform-specific adaptations where needed. Consistent APIs across platforms for easier cross-platform development. Linux support via swift-corelibs-foundation with simplified fallbacks for Apple-only formatters.
+Contributions welcome! Please read [Contributing Guidelines](CONTRIBUTING.md) before submitting PRs.
 
 ---
 
-## 🧪 Testing
+## License
 
-RKUtils includes **124 comprehensive tests** using the modern **Swift Testing** framework:
+MIT License - see [LICENSE](LICENSE) for details.
 
-```bash
-swift test
-```
-
-**Test Coverage:**
-
-**Apple Platforms (124 tests):**
-- ✅ 109 cross-platform core tests
-- ✅ 27 UIKit tests (iOS/tvOS/visionOS)
-- ✅ 17 AppKit tests (macOS)
-
-**Linux (93 tests):**
-- ✅ 92 passing (core utilities)
-- ⚠️ 1 expected failure (complex locale formatting - swift-corelibs-foundation limitation)
-
-**CI/CD:** Automated testing on iOS, macOS, and Linux via GitHub Actions
+Copyright © 2024 [Rakibur Khan](https://github.com/TheRakiburKhan)
 
 ---
 
-## 📖 Documentation
+<p align="center">
+  <a href="https://github.com/TheRakiburKhan/RKUtils/stargazers">⭐️ Star</a> •
+  <a href="https://github.com/TheRakiburKhan/RKUtils/issues">🐛 Issues</a> •
+  <a href="https://github.com/TheRakiburKhan/RKUtils/pulls">🔀 Pull Requests</a>
+</p>
 
-### Code Examples
-
-All extensions are thoroughly documented with inline documentation. Use Xcode's Quick Help (⌥ + Click) to view documentation for any method.
-
-### Migration Guides
-
-See [CHANGELOG.md](CHANGELOG.md) for:
-
-- Migration from UIKit to AppKit
-- Migration from XCTest to Swift Testing
-- Complete feature list and version history
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! We love your input and appreciate any contributions, whether it's:
-
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
-
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct, development process, and how to submit pull requests.
-
----
-
-## 📄 License
-
-RKUtils is released under the MIT License. See [LICENSE](LICENSE) for full details.
-
-Copyright (c) 2024 Rakibur Khan
-
----
-
-## 👤 Author
-
-**Rakibur Khan**
-
-Passionate iOS & macOS developer focused on clean architecture, performance, and developer productivity.
-
-- 🔗 GitHub: [@TheRakiburKhan](https://github.com/TheRakiburKhan)
-- 📧 Email: [therakiburkhan@gmail.com](mailto:therakiburkhan@gmail.com)
-- 💼 LinkedIn: [LinkedIn](https://linkedin.com/in/TheRakiburKhan)
-
----
-
-## 🌟 Acknowledgments
-
-Special thanks to:
-
-- The Swift community for inspiration
-- All contributors who help improve this package
-- Apple for providing excellent platform APIs
-
----
-
-## 📊 Stats
-
-![GitHub stars](https://img.shields.io/github/stars/TheRakiburKhan/RKUtils?style=social)
-![GitHub forks](https://img.shields.io/github/forks/TheRakiburKhan/RKUtils?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/TheRakiburKhan/RKUtils?style=social)
-
----
-
-<p align="center">Made with ❤️ by Rakibur Khan</p>
-<p align="center">If you find this package useful, please consider giving it a ⭐️</p>
+<p align="center">Made with ❤️ by <a href="https://github.com/TheRakiburKhan">Rakibur Khan</a></p>
