@@ -9,10 +9,24 @@
 import AppKit
 
 public extension NSColor {
-    /// Creates an NSColor from a hex string.
-    /// - Parameters:
-    ///   - hexString: A hex color string (e.g., "#FF5733", "FF5733")
-    ///   - alpha: The opacity value (0.0 to 1.0). Defaults to 1.0
+    /**
+     Creates an `NSColor` from a hex color string.
+
+     Supports hex strings with or without the `#` prefix. Parses 6-character hex values (RRGGBB).
+
+     - Parameters:
+        - hexString: The hex color string (e.g., `"#FF5733"` or `"FF5733"`)
+        - alpha: The opacity value (default: `1.0`)
+
+     - Returns: An `NSColor` initialized with the hex color and alpha.
+
+     - Example:
+     ```swift
+     let color1 = NSColor(hexString: "#FF5733")
+     let color2 = NSColor(hexString: "FF5733")
+     let color3 = NSColor(hexString: "#FF5733", alpha: 0.8)
+     ```
+     */
     convenience init(hexString: String, alpha: CGFloat = 1.0) {
         let hexString: String = hexString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         let scanner = Scanner(string: hexString)
