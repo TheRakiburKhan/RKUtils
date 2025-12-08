@@ -1,11 +1,10 @@
 # RKUtils
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Platform-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20visionOS%20%7C%20Linux-blue.svg" alt="Platform">
-  <img src="https://img.shields.io/badge/Swift-6.0+-orange.svg" alt="Swift">
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
-  <img src="https://img.shields.io/badge/SPM-Compatible-brightgreen.svg" alt="SPM">
-</p>
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FTheRakiburKhan%2FRKUtils%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/TheRakiburKhan/RKUtils)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FTheRakiburKhan%2FRKUtils%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/TheRakiburKhan/RKUtils)
+![SPM](https://img.shields.io/badge/SPM-Compatible-brightgreen.svg)
+[![wakatime](https://wakatime.com/badge/github/TheRakiburKhan/RKUtils.svg)](https://wakatime.com/badge/github/TheRakiburKhan/RKUtils)
+[![CI](https://github.com/TheRakiburKhan/RKUtils/actions/workflows/ci.yml/badge.svg)](https://github.com/TheRakiburKhan/RKUtils/actions/workflows/ci.yml)
 
 A comprehensive, cross-platform Swift package with extensions and utilities for UIKit, AppKit, and Foundation.
 
@@ -125,14 +124,14 @@ let cell = tableView.dequeueReusableCell(cell: MyCell.self, owner: self)
 
 ## Platform Requirements
 
-| Platform | Version | Features |
-|----------|---------|----------|
-| iOS | 13.0+ | Full |
-| macOS | 10.15+ | Full |
-| tvOS | 13.0+ | Full |
-| watchOS | 6.0+ | Full |
-| visionOS | 1.0+ | Full |
-| Linux | Any | Core utilities* |
+| Platform | Version | Features         |
+| -------- | ------- | ---------------- |
+| iOS      | 13.0+   | Full             |
+| macOS    | 10.15+  | Full             |
+| tvOS     | 13.0+   | Full             |
+| watchOS  | 6.0+    | Full             |
+| visionOS | 1.0+    | Full             |
+| Linux    | Any     | Core utilities\* |
 
 **Swift:** 6.0+ | **Xcode:** 16.0+
 
@@ -140,12 +139,14 @@ let cell = tableView.dequeueReusableCell(cell: MyCell.self, owner: self)
 <summary><b>*Linux Limitations</b></summary>
 
 Unavailable on Linux (Apple frameworks only):
+
 - CoreLocation (CLLocationCoordinate2D)
 - CoreGraphics (CGRect)
 - SwiftUI (Color)
 - Advanced formatters (measurements, relative dates)
 
 Linux gets simplified fallbacks for time formatting. See [CHANGELOG](CHANGELOG.md) for details.
+
 </details>
 
 ---
@@ -153,7 +154,6 @@ Linux gets simplified fallbacks for time formatting. See [CHANGELOG](CHANGELOG.m
 ## Documentation
 
 - 📖 **[CHANGELOG](CHANGELOG.md)** - Version history and migration guides
-- 📚 **[Wiki](https://github.com/TheRakiburKhan/RKUtils/wiki)** - Detailed documentation
 - 🐛 **[Issues](https://github.com/TheRakiburKhan/RKUtils/issues)** - Report bugs or request features
 
 All extensions include inline documentation. Use Xcode's Quick Help (⌥ + Click) for details.

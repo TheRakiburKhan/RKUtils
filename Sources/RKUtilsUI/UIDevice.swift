@@ -9,6 +9,24 @@
 import UIKit
 
 public extension UIDevice {
+    /**
+     Returns the human-readable device model name.
+
+     Detects the specific device model using system information and returns user-friendly names
+     like "iPhone 14 Pro" or "iPad Pro (12.9-inch) (5th generation)" instead of internal identifiers.
+
+     - Returns: The device model name as a string (e.g., "iPhone 14 Pro", "iPad mini (6th generation)").
+
+     - Example:
+     ```swift
+     let device = UIDevice.modelName
+     print(device)  // "iPhone 14 Pro" on an iPhone 14 Pro
+                    // "iPad Pro (11-inch) (3rd generation)" on that iPad
+                    // "Simulator iPhone 14 Pro" when running in Simulator
+     ```
+
+     - Note: On iOS Simulator, returns "Simulator [model]". For unrecognized devices, returns the internal identifier (e.g., "iPhone15,2").
+     */
     static let modelName: String = {
         var systemInfo = utsname()
         uname(&systemInfo)

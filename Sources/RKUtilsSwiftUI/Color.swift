@@ -9,6 +9,26 @@
 import SwiftUI
 
 public extension Color {
+    /**
+     Creates a SwiftUI `Color` from a hex color string.
+
+     Supports hex strings with or without the `#` prefix. Parses 6-character hex values (RRGGBB).
+
+     - Parameters:
+        - hexString: The hex color string (e.g., `"#FF5733"` or `"FF5733"`)
+        - alpha: The opacity value (default: `1.0`)
+
+     - Returns: A `Color` initialized with the hex color and alpha.
+
+     - Example:
+     ```swift
+     Color(hexString: "#FF5733")
+     Color(hexString: "FF5733")
+     Color(hexString: "#FF5733", alpha: 0.8)
+     ```
+
+     - Note: Works on all Apple platforms: iOS, macOS, tvOS, watchOS, visionOS.
+     */
     init(hexString: String, alpha: Double = 1.0) {
         let hexString: String = hexString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         let scanner = Scanner(string: hexString)

@@ -52,11 +52,12 @@ public extension Date {
     
     /**
     Formats the date to a string using a default or custom format.
-     
+
      - Parameters:
         - format: The format string. Defaults to `"yyyy-MM-dd HH:mm:ss"`.
+        - calendar: Optional calendar to use for formatting.
         - timeZone: Optional time zone to apply.
-     
+
      - Returns: The formatted date string.
      */
     func toString(format: String = "yyyy-MM-dd HH:mm:ss", calendar: Calendar? = nil, timeZone: TimeZone? = nil) -> String {
@@ -83,6 +84,7 @@ public extension Date {
         - context: The formatting context (e.g. `.listItem`, `.standalone`).
         - style: The date-time style (e.g. `.numeric`, `.named`).
         - unitStyle: The style of the units (e.g. `.abbreviated`, `.full`).
+        - calendar: Optional calendar to use for formatting.
 
      - Returns: A localized relative time string.
      */
@@ -103,11 +105,12 @@ public extension Date {
     
     /**
      Returns the distance between `self` and `referanceDate` in the specified calendar component.
-     
+
      - Parameters:
         - unit: The calendar component to measure.
         - referanceDate: The date to count toward.
-     
+        - calendar: The calendar to use for calculations. Defaults to `.autoupdatingCurrent`.
+
      - Returns: The difference in the specified unit.
      */
     func distanceOf(_ unit: Calendar.Component, till referanceDate: Date, calendar: Calendar = .autoupdatingCurrent) -> Int {
@@ -118,11 +121,12 @@ public extension Date {
     
     /**
      Returns the distance between `referanceDate` and `self` in the specified calendar component.
-     
+
      - Parameters:
         - unit: The calendar component to measure.
         - referanceDate: The date to count from.
-     
+        - calendar: The calendar to use for calculations. Defaults to `.autoupdatingCurrent`.
+
      - Returns: The difference in the specified unit.
      */
      func distanceOf(_ unit: Calendar.Component, from referanceDate: Date, calendar: Calendar = .autoupdatingCurrent) -> Int {
@@ -133,11 +137,13 @@ public extension Date {
     
     /**
      Returns a date after adding a specified value and calendar component to `self`.
-     
+
      - Parameters:
         - count: The amount to add.
         - unit: The calendar component to add.
-     
+        - calendar: The calendar to use for calculations. Defaults to `.autoupdatingCurrent`.
+        - timeZone: The time zone to use. Defaults to `.autoupdatingCurrent`.
+
      - Returns: The resulting future date.
      */
     func dateAfter(_ count: Int, _ unit: Calendar.Component, calendar: Calendar = .autoupdatingCurrent, timeZone: TimeZone = .autoupdatingCurrent) -> Date? {
@@ -149,11 +155,13 @@ public extension Date {
     
     /**
      Returns a date before subtracting a specified value and calendar component from `self`.
-     
+
      - Parameters:
         - count: The amount to subtract.
         - unit: The calendar component to subtract.
-     
+        - calendar: The calendar to use for calculations. Defaults to `.autoupdatingCurrent`.
+        - timeZone: The time zone to use. Defaults to `.autoupdatingCurrent`.
+
      - Returns: The resulting past date.
      */
     func dateBefore(_ count: Int, _ unit: Calendar.Component, calendar: Calendar = .autoupdatingCurrent, timeZone: TimeZone = .autoupdatingCurrent) -> Date? {
@@ -193,7 +201,9 @@ public extension Date {
 extension Date {
     /**
      Returns true if the date is today (ignores time).
-     
+
+     - Parameter calendar: The calendar to use for comparison. Defaults to `.autoupdatingCurrent`.
+
      - Returns: `true` if the date is today.
     */
     func isInToday(calendar: Calendar = .autoupdatingCurrent) -> Bool {

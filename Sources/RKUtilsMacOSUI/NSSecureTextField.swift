@@ -15,9 +15,28 @@ fileprivate var secureTextState: Bool?
 fileprivate var systemTintColor: NSColor?
 
 public extension NSSecureTextField {
-    /// Sets up a toggle button to show/hide password in a secure text field
-    /// Similar to UITextField's setSecureTextToggleToRight but for AppKit
-    /// - Parameter color: The tint color for the button when password is visible
+    /**
+     Adds a toggle button to show/hide password text in the secure text field.
+
+     Creates a button positioned to the right of the text field that toggles between
+     showing and hiding the password. Switches between `NSSecureTextField` and `NSTextField`
+     to achieve the show/hide functionality.
+
+     - Parameter color: The tint color to use when the password is visible.
+
+     - Example:
+     ```swift
+     let passwordField = NSSecureTextField()
+     passwordField.setSecureTextToggleToRight(.systemBlue)
+     // User can click the eye icon to toggle password visibility
+     ```
+
+     - Note: Similar to UIKit's `setSecureTextToggleToRight` but adapted for AppKit.
+     The button shows an "eye" icon when hidden and "eye.slash" when visible.
+     Requires macOS 11.0+ for SF Symbols support; uses emoji fallback on macOS 10.15.
+
+     - Important: The text field must be added to a superview before calling this method.
+     */
     func setSecureTextToggleToRight(_ color: NSColor) {
         guard let superview = self.superview else { return }
 
