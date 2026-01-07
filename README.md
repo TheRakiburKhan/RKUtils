@@ -13,7 +13,7 @@ A comprehensive, cross-platform Swift package with extensions and utilities for 
 - 🌐 **Cross-Platform** - Works on iOS, macOS, tvOS, watchOS, visionOS, and Linux
 - 🎨 **UIKit & AppKit** - Consistent APIs with platform parity
 - 📦 **Zero Dependencies** - Lightweight and efficient
-- 🧪 **Well Tested** - Comprehensive test coverage
+- 🧪 **Well Tested** - Comprehensive test coverage (194 tests)
 - 🚀 **Production Ready** - Battle-tested in production apps
 
 ---
@@ -26,7 +26,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "2.1.0")
+    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "3.0.0")
 ]
 ```
 
@@ -34,17 +34,15 @@ dependencies: [
 
 1. **File > Add Package Dependencies...**
 2. Enter: `https://github.com/TheRakiburKhan/RKUtils.git`
-3. Select version and add to your target
+3. Select version **3.0.0+** and add to your target
 
-### Targets
+### Target Configuration
 
 ```swift
 .target(
     name: "YourTarget",
     dependencies: [
-        .product(name: "RKUtils", package: "RKUtils"),       // Cross-platform
-        .product(name: "RKUtilsUI", package: "RKUtils"),     // UIKit (iOS/tvOS)
-        .product(name: "RKUtilsMacOS", package: "RKUtils"),  // AppKit (macOS)
+        .product(name: "RKUtils", package: "RKUtils")
     ]
 )
 ```
@@ -60,12 +58,11 @@ import RKUtils
 
 // String
 "test@example.com".isValidEmail  // true
-"2024-12-08".toDate(format: "yyyy-MM-dd")
+"2024-12-08".toDate(stringFormat: "yyyy-MM-dd")
 
 // Date
 Date().toString(format: "yyyy-MM-dd")
-Date().addingDays(7)
-Date().relativeTime()  // "2 hours ago" (Apple only)
+Date().relativeTime()  // "2 hours ago" (Apple platforms only)
 
 // Numbers
 1234.abbreviated  // "1.2K"
@@ -73,14 +70,15 @@ Date().relativeTime()  // "2 hours ago" (Apple only)
 10.times { print("Hello") }
 
 // Bundle
-Bundle.main.appVersion  // "1.0.0"
-Bundle.main.displayName
+Bundle.main.releaseVersionNumber  // "1.0.0"
+Bundle.main.bundleDisplayName  // "My App"
+Bundle.main.isSimulator  // true/false
 ```
 
 ### UIKit (iOS/tvOS/visionOS)
 
 ```swift
-import RKUtilsUI
+import RKUtils  // Single import for all platforms
 
 // UIView styling
 view.setCornerRadius(cornerRadius: 10)
@@ -91,26 +89,34 @@ view.applyBlurEffect(style: .regular)
 
 // UIColor
 let color = UIColor(hexString: "#FF5733")
+let lighter = color.lighter(by: 0.2)
+let darker = color.darker(by: 0.3)
 
 // UITextField
 textField.setSecureTextToggleToRight(.systemBlue)
 textField.textPublisher().sink { text in print(text) }
 textField.setLeftPaddingPoints(16)
+
+// Type-safe table views
+tableView.register(cell: MyCell.self)
+let cell = tableView.dequeueReusableCell(MyCell.self, for: indexPath)
 ```
 
 ### AppKit (macOS)
 
 ```swift
-import RKUtilsMacOS
+import RKUtils  // Same import!
 
 // NSView - Same API as UIView!
 view.setCornerRadius(cornerRadius: 10)
 view.setBorder(width: 2, color: .red)
 view.setShadow(color: .black, opacity: 0.3, radius: 4)
+view.setLinearGradientBackground(colors: [.blue, .purple])
 view.applyBlurEffect(material: .contentBackground)
 
-// NSColor
+// NSColor - Same API as UIColor!
 let color = NSColor(hexString: "#FF5733")
+let lighter = color.lighter(by: 0.2)
 
 // NSSecureTextField
 secureTextField.setSecureTextToggleToRight(.systemBlue)
@@ -120,18 +126,37 @@ tableView.register(cell: MyCell.self)
 let cell = tableView.dequeueReusableCell(cell: MyCell.self, owner: self)
 ```
 
+### SwiftUI
+
+```swift
+import SwiftUI
+import RKUtils
+
+struct ContentView: View {
+    var body: some View {
+        Text("Hello")
+            .foregroundColor(.white)
+            .padding()
+            .background(
+                Color(hexString: "#007AFF")
+                    .lighter(by: 0.2)
+            )
+    }
+}
+```
+
 ---
 
 ## Platform Requirements
 
-| Platform | Version | Features         |
-| -------- | ------- | ---------------- |
-| iOS      | 13.0+   | Full             |
-| macOS    | 10.15+  | Full             |
-| tvOS     | 13.0+   | Full             |
-| watchOS  | 6.0+    | Full             |
-| visionOS | 1.0+    | Full             |
-| Linux    | Any     | Core utilities\* |
+| Platform | Version | Features           |
+| -------- | ------- | ------------------ |
+| iOS      | 14.0+   | Full               |
+| macOS    | 11.0+   | Full               |
+| tvOS     | 14.0+   | Full               |
+| watchOS  | 7.0+    | Foundation + SwiftUI |
+| visionOS | 1.0+    | Full               |
+| Linux    | Any     | Core utilities\*   |
 
 **Swift:** 6.0+ | **Xcode:** 16.0+
 
@@ -145,7 +170,7 @@ Unavailable on Linux (Apple frameworks only):
 - SwiftUI (Color)
 - Advanced formatters (measurements, relative dates)
 
-Linux gets simplified fallbacks for time formatting. See [CHANGELOG](CHANGELOG.md) for details.
+Linux gets simplified fallbacks for time formatting. See [Platform Support](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/platform-support) for details.
 
 </details>
 
@@ -153,10 +178,39 @@ Linux gets simplified fallbacks for time formatting. See [CHANGELOG](CHANGELOG.m
 
 ## Documentation
 
+- 📚 **[Official Documentation](https://docs.therakiburkhan.dev/RKUtils/)** - Multi-platform documentation
+  - [iOS/UIKit Documentation](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/)
+  - [macOS/AppKit Documentation](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/)
 - 📖 **[CHANGELOG](CHANGELOG.md)** - Version history and migration guides
+- 🔄 **[Migration Guide](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/migration-guide)** - Upgrade from v2.x to v3.0
 - 🐛 **[Issues](https://github.com/TheRakiburKhan/RKUtils/issues)** - Report bugs or request features
 
 All extensions include inline documentation. Use Xcode's Quick Help (⌥ + Click) for details.
+
+---
+
+## What's New in v3.0
+
+### Single Target Architecture
+
+v3.0 simplifies everything with a **single unified target**:
+
+```swift
+// Before (v2.x)
+import RKUtilsUI      // iOS
+import RKUtilsMacOS   // macOS
+
+// After (v3.0)
+import RKUtils        // All platforms!
+```
+
+**Benefits:**
+- ✅ One library, one import
+- ✅ Unified documentation
+- ✅ Simpler Package.swift
+- ✅ Same APIs, better experience
+
+See the [Migration Guide](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/migration-guide) for upgrade instructions.
 
 ---
 
@@ -170,7 +224,7 @@ Contributions welcome! Please read [Contributing Guidelines](CONTRIBUTING.md) be
 
 MIT License - see [LICENSE](LICENSE) for details.
 
-Copyright © 2024 [Rakibur Khan](https://github.com/TheRakiburKhan)
+Copyright © 2025 [Rakibur Khan](https://github.com/TheRakiburKhan)
 
 ---
 
