@@ -9,7 +9,7 @@
 import Testing
 import AppKit
 import Combine
-@testable import RKUtilsMacOSUI
+@testable import RKUtils
 
 @MainActor
 @Suite("NSTextField Extensions")

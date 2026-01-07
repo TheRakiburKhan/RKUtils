@@ -33,7 +33,6 @@ public extension NSSecureTextField {
 
      - Note: Similar to UIKit's `setSecureTextToggleToRight` but adapted for AppKit.
      The button shows an "eye" icon when hidden and "eye.slash" when visible.
-     Requires macOS 11.0+ for SF Symbols support; uses emoji fallback on macOS 10.15.
 
      - Important: The text field must be added to a superview before calling this method.
      */
@@ -50,17 +49,8 @@ public extension NSSecureTextField {
         let iconButton = NSButton(frame: NSRect(x: 0, y: 0, width: size, height: size))
         iconButton.bezelStyle = .texturedRounded
         iconButton.isBordered = false
-
-        if #available(macOS 11.0, *) {
-            iconButton.image = NSImage(systemSymbolName: "eye", accessibilityDescription: "Show password")
-        } else {
-            // Fallback for macOS 10.15: use text or a simple shape
-            iconButton.title = "👁"
-        }
-
-        if #available(macOS 11.0, *) {
-            iconButton.contentTintColor = .systemGray
-        }
+        iconButton.image = NSImage(systemSymbolName: "eye", accessibilityDescription: "Show password")
+        iconButton.contentTintColor = .systemGray
 
         iconButton.target = self
         iconButton.action = #selector(toggleSecureTextControl(_:))
@@ -113,12 +103,8 @@ public extension NSSecureTextField {
             self.isHidden = true
 
             // Update button
-            if #available(macOS 11.0, *) {
-                sender.image = NSImage(systemSymbolName: "eye.slash", accessibilityDescription: "Hide password")
-                sender.contentTintColor = tint
-            } else {
-                sender.title = "👁‍🗨"
-            }
+            sender.image = NSImage(systemSymbolName: "eye.slash", accessibilityDescription: "Hide password")
+            sender.contentTintColor = tint
 
             textSecured = false
             secureTextState = textSecured
@@ -138,12 +124,8 @@ public extension NSSecureTextField {
             self.isHidden = false
 
             // Update button
-            if #available(macOS 11.0, *) {
-                sender.image = NSImage(systemSymbolName: "eye", accessibilityDescription: "Show password")
-                sender.contentTintColor = .systemGray
-            } else {
-                sender.title = "👁"
-            }
+            sender.image = NSImage(systemSymbolName: "eye", accessibilityDescription: "Show password")
+            sender.contentTintColor = .systemGray
 
             textSecured = true
             secureTextState = textSecured

@@ -10,7 +10,7 @@ import Foundation
 @testable import RKUtils
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
-@testable import RKUtilsUI
+@testable import RKUtils
 
 @MainActor
 @Suite("UIView Extensions")

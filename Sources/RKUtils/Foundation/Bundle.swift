@@ -72,4 +72,29 @@ public extension Bundle {
     var bundleDisplayName: String {
         return infoDictionary?["CFBundleDisplayName"] as? String ?? ""
     }
+
+    /**
+     Indicates whether the app is running on a simulator.
+
+     This property uses compile-time detection via `targetEnvironment(simulator)` to determine
+     if the app is running on a simulator or physical device.
+
+     - Returns: `true` if running on a simulator, `false` if running on a physical device.
+
+     - Example:
+     ```swift
+     if Bundle.main.isSimulator {
+         print("Running on simulator")
+     } else {
+         print("Running on device")
+     }
+     ```
+     */
+    var isSimulator: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }
 }

@@ -8,7 +8,7 @@
 #if canImport(UIKit) && !os(watchOS)
 import Testing
 import UIKit
-@testable import RKUtilsUI
+@testable import RKUtils
 
 @MainActor
 @Suite("UITableView Extensions")

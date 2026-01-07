@@ -10,7 +10,7 @@ import Foundation
 @testable import RKUtils
 #if canImport(UIKit)
 import UIKit
-@testable import RKUtilsUI
+@testable import RKUtils
 
 @Suite("CGRect Extensions")
 struct CGRectExtensionsTests {

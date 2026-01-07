@@ -8,7 +8,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import Testing
 import AppKit
-@testable import RKUtilsMacOSUI
+@testable import RKUtils
 
 @MainActor
 @Suite("NSTableView Extensions")

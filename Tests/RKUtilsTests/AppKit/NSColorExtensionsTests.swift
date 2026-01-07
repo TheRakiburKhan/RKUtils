@@ -1,5 +1,5 @@
 //
-//  UIColorExtensionsTests.swift
+//  NSColorExtensionsTests.swift
 //  RKUtils
 //
 //  Created by Rakibur Khan on 3/12/25.
@@ -8,12 +8,12 @@
 import Testing
 import Foundation
 @testable import RKUtils
-#if canImport(UIKit)
-import UIKit
-@testable import RKUtilsUI
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+import AppKit
+@testable import RKUtils
 
-@Suite("UIColor Extensions")
-struct UIColorExtensionsTests {
+@Suite("NSColor Extensions")
+struct NSColorExtensionsTests {
 
     @Test("Hex string initialization with hash", arguments: [
         ("#FF5733", 255, 87, 51),
@@ -23,7 +23,7 @@ struct UIColorExtensionsTests {
         ("#000000", 0, 0, 0)
     ])
     func hexStringWithHash(hex: String, expectedRed: Int, expectedGreen: Int, expectedBlue: Int) {
-        let color = UIColor(hexString: hex)
+        let color = NSColor(hexString: hex)
 
         var red: CGFloat = 0
         var green: CGFloat = 0
@@ -40,7 +40,7 @@ struct UIColorExtensionsTests {
 
     @Test("Hex string initialization without hash")
     func hexStringWithoutHash() {
-        let color = UIColor(hexString: "FF5733")
+        let color = NSColor(hexString: "FF5733")
 
         var red: CGFloat = 0
         var green: CGFloat = 0
@@ -56,7 +56,7 @@ struct UIColorExtensionsTests {
 
     @Test("Hex string with custom alpha")
     func hexStringWithAlpha() {
-        let color = UIColor(hexString: "#FF5733", alpha: 0.5)
+        let color = NSColor(hexString: "#FF5733", alpha: 0.5)
 
         var red: CGFloat = 0
         var green: CGFloat = 0
@@ -70,7 +70,7 @@ struct UIColorExtensionsTests {
 
     @Test("Hex string with whitespace")
     func hexStringWithWhitespace() {
-        let color = UIColor(hexString: "  #FF5733  ")
+        let color = NSColor(hexString: "  #FF5733  ")
 
         var red: CGFloat = 0
         var green: CGFloat = 0

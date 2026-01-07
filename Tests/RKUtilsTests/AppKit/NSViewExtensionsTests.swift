@@ -10,7 +10,7 @@ import Foundation
 @testable import RKUtils
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
-@testable import RKUtilsMacOSUI
+@testable import RKUtils
 
 @MainActor
 @Suite("NSView Extensions")

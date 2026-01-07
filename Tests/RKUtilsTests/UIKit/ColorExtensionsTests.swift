@@ -8,7 +8,7 @@
 #if canImport(SwiftUI)
 import Testing
 import SwiftUI
-@testable import RKUtilsSwiftUI
+@testable import RKUtils
 
 @Suite("Color Extensions")
 struct ColorExtensionsTests {

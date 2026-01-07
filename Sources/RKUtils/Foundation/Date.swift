@@ -34,6 +34,7 @@ public extension Date {
     Converts the date to a human-readable string using a custom date format.
      
      - Parameters:
+        - calendar: The calendar currently using. `Calander`
         - timeZone: The time zone to use. Defaults to the current time zone.
         - locale: The locale to use. Defaults to the current locale.
         - format: The custom format string (e.g. "dd-MM-yyyy HH:mm").
@@ -88,7 +89,6 @@ public extension Date {
 
      - Returns: A localized relative time string.
      */
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func relativeTime(to referanceDate: Date = Date(), context: Formatter.Context = .listItem, style: RelativeDateTimeFormatter.DateTimeStyle = .numeric, unitStyle: RelativeDateTimeFormatter.UnitsStyle = .abbreviated, calendar: Calendar? = nil) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.formattingContext = context
