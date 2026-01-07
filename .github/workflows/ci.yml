@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cache SPM dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .build
@@ -57,8 +57,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     if: >
-      contains(github.event.head_commit.modified, 'Sources/RKUtilsUI/') ||
-      contains(github.event.head_commit.modified, 'Sources/RKUtilsSwiftUI/') ||
+      contains(github.event.head_commit.modified, 'Sources/RKUtils/') ||
       contains(github.event.head_commit.modified, 'Package.swift') ||
       github.event_name == 'pull_request'
 
@@ -67,7 +66,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cache SPM dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .build
@@ -119,7 +118,7 @@ jobs:
           echo "Building for iOS (${{ env.SELECTED_IOS }}) with device: ${{ env.SELECTED_DEVICE }}"
           # Build to verify iOS compatibility
           xcodebuild build \
-            -scheme RKUtilsUI \
+            -scheme RKUtils \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${{ env.SELECTED_DEVICE }}"
 
@@ -128,7 +127,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     if: >
-      contains(github.event.head_commit.modified, 'Sources/RKUtilsMacOSUI/') ||
+      contains(github.event.head_commit.modified, 'Sources/RKUtils/') ||
       contains(github.event.head_commit.modified, 'Package.swift') ||
       github.event_name == 'pull_request'
 
@@ -137,7 +136,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cache SPM dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .build
@@ -151,7 +150,7 @@ jobs:
           echo "Building for macOS"
           # Build to verify macOS compatibility
           xcodebuild build \
-            -scheme RKUtilsMacOS \
+            -scheme RKUtils \
             -sdk macosx \
             -destination "platform=macOS"
 
@@ -170,7 +169,7 @@ jobs:
           swift-version: "6.0"
 
       - name: Cache SPM dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .build
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/Package.swift') }}
@@ -188,7 +187,7 @@ jobs:
       - name: Run RKUtils tests
         run: |
           echo "Running RKUtils tests on Linux"
-          swift test --filter RKUtilsTests
+          swift test
 
   validate:
     name: Package Validation

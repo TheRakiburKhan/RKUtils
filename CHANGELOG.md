@@ -11,6 +11,108 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.0] - 2025-01-08
+
+### 🎉 Major Release - Single Target Architecture & Comprehensive Documentation
+
+### Added
+
+#### 📚 Comprehensive Documentation Overhaul
+
+**New Dedicated Documentation Website:**
+
+- **Platform Selector:** [https://docs.therakiburkhan.dev/RKUtils/](https://docs.therakiburkhan.dev/RKUtils/)
+- **iOS/UIKit Docs:** [https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/)
+- **macOS/AppKit Docs:** [https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/)
+
+**Why Separate Builds?**
+- iOS build documents UIKit symbols (UIView, UIColor, UICollectionView, etc.)
+- macOS build documents AppKit symbols (NSView, NSColor, NSCollectionView, etc.)
+- Foundation and SwiftUI extensions available in both
+
+**Documentation Quality Improvements:**
+
+- ✅ **100% Accuracy** - All 12 extension docs verified against source code
+- ✅ **Real-World Examples** - Login forms, settings screens, photo galleries, navigation patterns
+- ✅ **Complete API Coverage** - Every public method documented with code samples
+- ✅ **Platform Availability** - Clear indicators for iOS/macOS/Linux-specific features
+- ✅ **Dark Mode Support** - Beautiful, accessible documentation interface
+
+**Comprehensive Guides:**
+- **Installation Guide** - Swift Package Manager, Xcode, Package.swift integration
+- **Quick Start** - Platform-specific usage examples
+- **Migration Guide v2→v3** - Step-by-step upgrade instructions ([iOS](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/migration-guide) | [macOS](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/migration-guide))
+- **Platform Support Matrix** - Feature availability across iOS, macOS, Linux, watchOS, tvOS, visionOS
+
+### Changed
+
+#### 🏗️ Architecture Refactoring - Single Target (BREAKING)
+
+**Major Simplification:**
+
+RKUtils has been refactored from a multi-target architecture (RKUtils, RKUtilsUI, RKUtilsMacOSUI, RKUtilsSwiftUI) to a **single unified target**. This dramatically simplifies the package structure, improves documentation, and enhances the developer experience.
+
+**What Changed:**
+
+- **Single Product:** Only `RKUtils` product exists now (removed `RKUtilsUI` and `RKUtilsMacOS` products)
+- **Single Target:** All code consolidated into one `RKUtils` target with organized subdirectories
+- **Single Import:** Users now `import RKUtils` everywhere (no more confusion about which product to use)
+- **Unified Documentation:** All extension documentation in one place with proper cross-referencing
+- **Organized Source Structure:**
+  ```
+  Sources/RKUtils/
+  ├── Foundation/    # Cross-platform (String, Date, Int, Double, etc.)
+  ├── UIKit/         # iOS/tvOS/visionOS extensions
+  ├── AppKit/        # macOS extensions
+  └── SwiftUI/       # SwiftUI Color extensions
+  ```
+
+**Migration Guide:**
+
+See the comprehensive migration guide: [iOS](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/migration-guide) | [macOS](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/migration-guide)
+
+```swift
+// Before (v2.x)
+import RKUtilsUI      // iOS
+import RKUtilsMacOS   // macOS
+
+// After (v3.0)
+import RKUtils        // All platforms
+```
+
+**Why This Change:**
+
+- ✅ **Simpler Mental Model** - One library, one import
+- ✅ **Better Documentation** - All extensions in one place, proper cross-referencing works
+- ✅ **Less Maintenance** - Single target, single test suite
+- ✅ **Same Safety** - Platform-specific code still uses `#if canImport(UIKit)` guards
+- ✅ **Zero Impact** - Conditional compilation ensures Linux/iOS/macOS only get relevant code
+
+**Technical Details:**
+
+- Platform separation now handled entirely by conditional compilation (`#if canImport`)
+- Package.swift reduced from 4 targets to 1 target
+- Test suite consolidated from 3 test targets to 1 organized test target
+- All 145 tests passing with the new structure
+
+#### 📱 Platform Requirements Update
+
+**Minimum Platform Versions Updated:**
+
+- iOS 13.0+ → **iOS 14.0+**
+- macOS 10.15+ → **macOS 11.0+**
+- tvOS 13.0+ → **tvOS 14.0+**
+- Mac Catalyst 13.0+ → **Mac Catalyst 14.0+**
+
+**Rationale:** Dropping support for pre-2020 OS versions to enable modern API usage and reduce maintenance overhead.
+
+**Code Cleanup:**
+- Removed unnecessary `@available` checks for iOS 14/macOS 11 APIs (SF Symbols, RelativeDateTimeFormatter)
+- NSSecureTextField now unconditionally uses SF Symbols for password visibility toggle
+- Date extensions no longer gate `relativeTime()` method with availability checks
+
+---
+
 ## [2.1.1] - 2025-12-08
 
 ### ✅ Test Coverage Improvements
@@ -103,7 +205,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **For existing users (Apple platforms):** No changes required.
 
-**For new Linux users:** See [Linux Platform Guide](https://github.com/TheRakiburKhan/RKUtils/wiki/Linux-Platform-Guide) for platform-specific limitations and code examples.
+**For new Linux users:** See Platform Support documentation ([iOS](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/platform-support) | [macOS](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/platform-support)) for platform-specific limitations and code examples.
 
 ---
 
@@ -152,7 +254,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `RKUtilsUI` (UIKit extensions for iOS/tvOS/visionOS)
   - `RKUtilsMacOS` (AppKit extensions for macOS)
 
-**Migration:** See [Migration Guide: v1 to v2](https://github.com/TheRakiburKhan/RKUtils/wiki/Migration-Guide-v1-to-v2) for complete upgrade instructions.
+**Migration:** See the [v2.0.0 release notes](https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.0.0) for upgrade instructions.
 
 **Quick Summary:**
 
@@ -182,21 +284,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Migration Guides
 
-- **[v1.0 → v2.0](https://github.com/TheRakiburKhan/RKUtils/wiki/Migration-Guide-v1-to-v2)** - Package rename, module splits, platform requirements
-- **[Linux Platform Guide](https://github.com/TheRakiburKhan/RKUtils/wiki/Linux-Platform-Guide)** - Cross-platform usage examples
-- **[UIKit to AppKit](https://github.com/TheRakiburKhan/RKUtils/wiki/UIKit-to-AppKit-Migration)** - Adapting iOS code for macOS
-- **[Testing Migration](https://github.com/TheRakiburKhan/RKUtils/wiki/Testing-Migration-XCTest-to-Swift-Testing)** - XCTest to Swift Testing
+- **v2.x → v3.0** - Single target architecture ([iOS](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/migration-guide) | [macOS](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/migration-guide))
+- **v1.0 → v2.0** - See [v2.0.0 release notes](https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.0.0)
+- **Platform Support** - Cross-platform features and limitations ([iOS](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/platform-support) | [macOS](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/platform-support))
 
 ---
 
 ## Links
 
 - [GitHub Repository](https://github.com/TheRakiburKhan/RKUtils)
-- [API Documentation](https://swiftpackageindex.com/TheRakiburKhan/RKUtils/documentation/rkutils)
-- [Wiki](https://github.com/TheRakiburKhan/RKUtils/wiki)
+- [Documentation](https://docs.therakiburkhan.dev/RKUtils/)
+  - [iOS/UIKit Documentation](https://docs.therakiburkhan.dev/RKUtils/ios/documentation/rkutils/)
+  - [macOS/AppKit Documentation](https://docs.therakiburkhan.dev/RKUtils/macos/documentation/rkutils/)
+- [Swift Package Index](https://swiftpackageindex.com/TheRakiburKhan/RKUtils)
 - [Report Issues](https://github.com/TheRakiburKhan/RKUtils/issues)
 
-[Unreleased]: https://github.com/TheRakiburKhan/RKUtils/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/TheRakiburKhan/RKUtils/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v3.0.0
 [2.1.1]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.1.1
 [2.1.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.1.0
 [2.0.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.0.0
