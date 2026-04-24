@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.1.1] - 2026-04-24
+
+### Fixed
+
+- **`secondsToTime(locale:)`** — locale parameter was silently ignored due to a Swift value-type mutation bug (`Calendar` is a struct; the previous code mutated a discarded copy). Locale is now correctly applied to the formatter. Affects both `Int` and `Double` extensions. Use `style: .brief` for locale-correct capitalisation in languages such as German (`"2Min."` instead of `"2min"`).
+
+---
+
 ## [3.1.0] - 2026-04-24
 
 ### Added
