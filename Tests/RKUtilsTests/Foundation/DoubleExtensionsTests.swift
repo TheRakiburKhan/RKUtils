@@ -71,7 +71,7 @@ import Testing
 
     @Test("abbreviated formats numbers with K, M, B suffixes")
     func abbreviated() {
-        #expect(999.0.abbreviated() == "999.0")
+        #expect(999.0.abbreviated() == "999")
         #expect(1_200.0.abbreviated().contains("1") && 1_200.0.abbreviated().contains("K"))
         #expect(1_500_000.0.abbreviated().contains("1") && 1_500_000.0.abbreviated().contains("M"))
         #expect(2_500_000_000.0.abbreviated().contains("2") && 2_500_000_000.0.abbreviated().contains("B"))
@@ -334,7 +334,7 @@ import Testing
 
     @Test("zero is handled correctly across methods")
     func zero() {
-        #expect(0.0.abbreviated() == "0.0")
+        #expect(0.0.abbreviated() == "0")
         #expect(0.0.isWholeNumber)
         #expect(0.0.signString == "")
     }

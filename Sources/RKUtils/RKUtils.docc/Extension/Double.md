@@ -211,7 +211,7 @@ Format numbers with localization and styling.
 - ``Double/percentage(minFraction:maxFraction:groupSize:)``
 - ``Double/currency(code:symbol:minFraction:maxFraction:groupSize:)``
 - ``Double/inWords(locale:)``
-- ``Double/abbreviated()``
+- ``Double/abbreviated(locale:decimalPlaces:)``
 - ``Double/toPositiveSuffix(interval:groupSeparator:)``
 
 ### Measurement Formatting
@@ -227,10 +227,10 @@ Format physical measurements with units (Apple platforms only).
 
 Convert numbers to time and date component strings.
 
-- ``Double/secondsToTime(calendar:units:style:context:)``
-- ``Double/day(calendar:style:context:)``
-- ``Double/month(calendar:style:context:)``
-- ``Double/year(calendar:style:context:)``
+- ``Double/secondsToTime(calendar:locale:units:style:context:)``
+- ``Double/day(calendar:locale:style:context:)``
+- ``Double/month(calendar:locale:style:context:)``
+- ``Double/year(calendar:locale:style:context:)``
 
 ### Mathematical Operations
 

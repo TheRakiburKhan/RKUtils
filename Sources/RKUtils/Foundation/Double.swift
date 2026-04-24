@@ -12,7 +12,7 @@ import Foundation
 // MARK: Number Formatting
 public extension Double {
     /**
-    Converts the Double to a localized string using NumberFormatter.
+     Converts the Double to a localized string using NumberFormatter.
      
      - Parameters:
         - minFraction: Minimum number of digits after the decimal point.
@@ -27,8 +27,8 @@ public extension Double {
     }
     
     /**
-    Converts the Double into scientific notation format.
-    
+     Converts the Double into scientific notation format.
+     
      - Parameters:
         - minFraction: Minimum digits after the decimal point.
         - maxFraction: Maximum digits after the decimal point.
@@ -50,8 +50,8 @@ public extension Double {
      
      - Returns: A percentage-formatted string.
      */
-     func percentage(minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
-         let value = self / 100.0
+    func percentage(minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
+        let value = self / 100.0
         let formatter = numberFormatter(minFraction: minFraction, maxFraction: maxFraction, numberStyle: .percent, groupSize: groupSize)
         return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.2f%%", value * 100)
     }
@@ -117,22 +117,30 @@ public extension Double {
     
     /**
      Converts the Double into abbreviated string (e.g., 1.2K, 5.6M).
-     
-     - Returns: A shortened string representation with suffixes.
+
+     - Parameters:
+        - locale: Locale for decimal separator formatting (default is `.current`).
+        - decimalPlaces: Maximum number of decimal digits to show (default is `1`).
+
+     - Returns: A shortened string representation with suffixes. Handles negative values.
      */
-    func abbreviated() -> String {
+    func abbreviated(locale: Locale = .current, decimalPlaces: Int = 1) -> String {
         let absValue = abs(self)
         let sign = self < 0 ? "-" : ""
-        
+
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = decimalPlaces
+        formatter.locale = locale
+
+        func format(_ value: Double) -> String {
+            formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+        }
+
         switch absValue {
-            case 1_000_000_000...:
-                return "\(sign)\((absValue / 1_000_000_000).roundedString(toPlaces: 1))B"
-            case 1_000_000...:
-                return "\(sign)\((absValue / 1_000_000).roundedString(toPlaces: 1))M"
-            case 1_000...:
-                return "\(sign)\((absValue / 1_000).roundedString(toPlaces: 1))K"
-            default:
-                return "\(sign)\(roundedString(toPlaces: 1))"
+            case 1_000_000_000...: return "\(sign)\(format(absValue / 1_000_000_000))B"
+            case 1_000_000...:    return "\(sign)\(format(absValue / 1_000_000))M"
+            case 1_000...:        return "\(sign)\(format(absValue / 1_000))K"
+            default:              return "\(sign)\(format(absValue))"
         }
     }
 }
@@ -142,62 +150,62 @@ public extension Double {
 public extension Double {
     /**
      Formats a Double as a distance value (e.g., meters, kilometers).
-
+     
      - Parameters:
         - baseUnit: Unit of measurement (default is meters).
         - unitStyle: Display style (e.g., .short, .medium).
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-
+     
      - Returns: A localized distance string.
      */
     func distance(baseUnit: UnitLength = .meters, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
-
+    
     /**
      Formats the Double as a duration (e.g., minutes, hours).
-
+     
      - Parameters:
         - baseUnit: Duration unit (default is `.minutes`).
         - unitStyle: Formatter style.
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-
+     
      - Returns: A formatted duration string.
      */
     func time(baseUnit: UnitDuration = .minutes, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
-
+    
     /**
      Formats the Double as a temperature value in Kelvin.
-
+     
      - Parameters:
         - baseUnit: Temperature Unit (default is `.kelvin`).
         - unitStyle: Display style.
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-
+     
      - Returns: A temperature-formatted string.
      */
     func temperature(baseUnit: UnitTemperature = .kelvin, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
         return measurementString(unit: baseUnit, unitStyle: unitStyle, minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
-
+    
     /**
      Formats the Double as a speed value in metersPerSecond.
-
+     
      - Parameters:
         - baseUnit: Speed Unit (default is `.metersPerSecond`).
         - unitStyle: Display style.
         - minFraction: Minimum fraction digits.
         - maxFraction: Maximum fraction digits.
         - groupSize: Optional grouping size.
-
+     
      - Returns: A speed-formatted string.
      */
     func speed(baseUnit: UnitSpeed = .metersPerSecond, unitStyle: Formatter.UnitStyle = .medium, minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
@@ -211,71 +219,65 @@ public extension Double {
 public extension Double {
     /**
      Converts seconds into a readable time format (e.g., "1h 3m").
-
+     
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - units: Allowed time components.
         - style: Output format style.
         - context: Formatting context.
-
+     
      - Returns: A time-formatted string.
      */
     func secondsToTime(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: units, style: style, context: context)
-
+        
         return formatter.string(from: self) ?? "\(self)s"
     }
-
+    
     /**
      Converts a number to a day count string.
-
+     
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
-
+     
      - Returns: A day-formatted string.
      */
     func day(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
-        let components = DateComponents(day: Int(self))
-        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: [.day], style: style, context: context)
-        return formatter.string(from: components) ?? toLocal()
+        Int(self).day(calendar: calendar, locale: locale, style: style, context: context)
     }
-
+    
     /**
      Converts a number to a month count string.
-
+     
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
-
+     
      - Returns: A month-formatted string.
      */
     func month(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
-        let components = DateComponents(month: Int(self))
-        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: [.month], style: style, context: context)
-        return formatter.string(from: components) ?? toLocal()
+        Int(self).month(calendar: calendar, locale: locale, style: style, context: context)
     }
-
+    
     /**
      Converts a number to a year count string.
-
+     
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
         - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
-
+     
      - Returns: A year-formatted string.
      */
     func year(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
-        let components = DateComponents(year: Int(self))
-        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: [.year], style: style, context: context)
-        return formatter.string(from: components) ?? toLocal()
+        Int(self).year(calendar: calendar, locale: locale, style: style, context: context)
     }
 }
 #else
@@ -289,7 +291,7 @@ public extension Double {
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
-
+        
         // If custom format provided, use it
         if let customFormat = format {
             var result = customFormat
@@ -301,7 +303,7 @@ public extension Double {
             result = result.replacingOccurrences(of: "%02s", with: String(format: "%02d", seconds))
             return result
         }
-
+        
         // Default format
         if hours > 0 {
             return String(format: "%d:%02d:%02d", hours, minutes, seconds)
@@ -309,23 +311,20 @@ public extension Double {
             return String(format: "%d:%02d", minutes, seconds)
         }
     }
-
+    
     // Linux fallback - basic formatting (style/context parameters not available on Linux)
     func day() -> String {
-        let days = Int(self)
-        return "\(days) day\(days == 1 ? "" : "s")"
+        Int(self).day()
     }
-
+    
     // Linux fallback - basic formatting (style/context parameters not available on Linux)
     func month() -> String {
-        let months = Int(self)
-        return "\(months) month\(months == 1 ? "" : "s")"
+        Int(self).month()
     }
-
+    
     // Linux fallback - basic formatting (style/context parameters not available on Linux)
     func year() -> String {
-        let years = Int(self)
-        return "\(years) year\(years == 1 ? "" : "s")"
+        Int(self).year()
     }
 }
 #endif
@@ -460,7 +459,7 @@ private extension Double {
         return formatter
     }
     
-    #if canImport(Darwin)
+#if canImport(Darwin)
     func dateComponentsFormatter(calendar: Calendar, locale: Locale, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
         formatter.calendar = calendar
@@ -470,15 +469,15 @@ private extension Double {
         formatter.formattingContext = context
         return formatter
     }
-
+    
     func measurementString<T: Dimension>(unit: T, unitStyle: Formatter.UnitStyle, minFraction: Int?, maxFraction: Int?, groupSize: Int?) -> String {
         let measurement = Measurement(value: self, unit: unit)
         let formatter = MeasurementFormatter()
         formatter.unitStyle = unitStyle
         formatter.unitOptions = .naturalScale
         formatter.numberFormatter = numberFormatter(minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
-
+        
         return formatter.string(from: measurement)
     }
-    #endif
+#endif
 }
