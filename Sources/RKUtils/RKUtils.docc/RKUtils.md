@@ -21,9 +21,9 @@ RKUtils provides battle-tested utilities for Foundation, UIKit, AppKit, and Swif
 import RKUtils
 
 // Foundation utilities work everywhere
-"test@example.com".isValidEmail  // true
-"2024-01-15".toDate(format: "yyyy-MM-dd")
-1_234_567.abbreviated  // "1.2M"
+"test@example.com".isValidEmail()  // true
+"2024-01-15".toDate(stringFormat: "yyyy-MM-dd")
+1_234_567.abbreviated()  // "1.2M"
 
 // UIKit (iOS, tvOS, visionOS)
 #if canImport(UIKit)
@@ -66,6 +66,7 @@ Cross-platform utilities that work on all Apple platforms.
 - ``Swift/Double``
 - ``Foundation/Bundle``
 - ``Foundation/Data``
+- ``Foundation/URL``
 - ``Foundation/ProcessInfo``
 
 ### UIKit Extensions

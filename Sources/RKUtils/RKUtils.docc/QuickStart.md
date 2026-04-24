@@ -34,27 +34,27 @@ These work on **all platforms** including iOS, macOS, tvOS, watchOS, visionOS, a
 import RKUtils
 
 let email = "user@example.com"
-if email.isValidEmail {
+if email.isValidEmail() {
     print("Valid email address")
 }
 
 // Invalid examples
-"@example.com".isValidEmail        // false
-"user@".isValidEmail               // false
-"not an email".isValidEmail        // false
+"@example.com".isValidEmail()        // false
+"user@".isValidEmail()               // false
+"not an email".isValidEmail()        // false
 ```
 
 #### Date Parsing from Strings
 
 ```swift
 let dateString = "2024-01-15"
-if let date = dateString.toDate(format: "yyyy-MM-dd") {
+if let date = dateString.toDate(stringFormat: "yyyy-MM-dd") {
     print("Parsed date: \(date)")
 }
 
 // ISO8601 parsing
 let isoString = "2024-01-15T10:30:00Z"
-if let isoDate = isoString.toISO8601Date() {
+if let isoDate = isoString.iso8601Date() {
     print("ISO date: \(isoDate)")
 }
 ```
@@ -63,19 +63,13 @@ if let isoDate = isoString.toISO8601Date() {
 
 ```swift
 let text = "Hello, World!"
-let encoded = text.base64Encoded
-print(encoded)  // "SGVsbG8sIFdvcmxkIQ=="
-
-if let decoded = encoded.base64Decoded {
-    print(decoded)  // "Hello, World!"
-}
+let encoded = text.toBase64  // "SGVsbG8sIFdvcmxkIQ=="
 ```
 
-#### Digit and Word Conversion
+#### Digit Names
 
 ```swift
-"123".digitNames        // "one two three"
-"ABC 123".digitNames    // "ABC one two three"
+123.digitNames()   // ["one", "two", "three"]
 ```
 
 ### Number Extensions
@@ -86,30 +80,30 @@ if let decoded = encoded.base64Decoded {
 import RKUtils
 
 // Abbreviations
-1_000.abbreviated       // "1K"
-1_234_567.abbreviated   // "1.2M"
-2_500_000_000.abbreviated  // "2.5B"
+1_000.abbreviated()       // "1K"
+1_234_567.abbreviated()   // "1.2M"
+2_500_000_000.abbreviated()  // "2.5B"
 
 // Locale-specific formatting
 let number = 1234
 number.toLocal()  // "1,234" (en_US) or "1 234" (fr_FR)
 
 // Pluralization
-1.pluralized(singular: "apple")           // "1 apple"
-2.pluralized(singular: "apple")           // "2 apples"
-2.pluralized(singular: "child", plural: "children")  // "2 children"
+1.pluralized("apple")              // "1 apple"
+2.pluralized("apple")              // "2 apples"
+2.pluralized("child", "children")  // "2 children"
 
 // Byte sizes
-1024.byteSizeFormatted       // "1.0 KB"
-1_048_576.byteSizeFormatted  // "1.0 MB"
+1024.byteSizeFormatted()       // "1 KB"
+1_048_576.byteSizeFormatted()  // "1 MB"
 ```
 
 #### Double Formatting
 
 ```swift
 // Percentages
-0.75.percentage()        // "75%"
-0.4567.percentage()      // "45.67%"
+75.0.percentage()        // "75%"
+45.67.percentage()       // "45.67%"
 
 // Currency
 99.99.currency(code: "USD")  // "$99.99"
@@ -119,7 +113,7 @@ number.toLocal()  // "1,234" (en_US) or "1 234" (fr_FR)
 123456.78.scientificNotation()  // "1.23e+05"
 
 // Rounding
-3.14159.roundedString(places: 2)  // "3.14"
+3.14159.roundedString(toPlaces: 2)  // "3.14"
 
 // Measurements (Darwin only)
 42.0.distance()      // "42 km"
@@ -202,7 +196,7 @@ import RKUtils
 // Version information
 let version = Bundle.main.releaseVersionNumber  // "1.0.0"
 let build = Bundle.main.buildVersionNumber      // "42"
-let pretty = Bundle.main.releaseVersionNumberPretty  // "1.0.0 (42)"
+let pretty = Bundle.main.releaseVersionNumberPretty  // "v1.0.0"
 
 // App name
 let appName = Bundle.main.bundleDisplayName  // "MyApp"
@@ -382,7 +376,7 @@ class MyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        textField.textPublisher
+        textField.textPublisher()
             .sink { text in
                 print("Text changed: \(text)")
             }
@@ -509,7 +503,7 @@ class MyViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        textField.textPublisher
+        textField.textPublisher()
             .sink { text in
                 print("Text changed: \(text)")
             }
@@ -695,7 +689,7 @@ class StatsViewController: NSViewController {
 
         setupStatsCard(
             title: "Total Users",
-            value: 1_234_567.abbreviated,  // "1.2M"
+            value: 1_234_567.abbreviated(),  // "1.2M"
             color: NSColor(hexString: "#007AFF")
         )
     }
@@ -773,7 +767,7 @@ struct LoginForm: View {
     var body: some View {
         TextField("Email", text: $email)
             .onChange(of: email) { newValue in
-                isValid = newValue.isValidEmail
+                isValid = newValue.isValidEmail()
             }
 
         if !isValid && !email.isEmpty {

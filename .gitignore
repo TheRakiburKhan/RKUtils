@@ -15,5 +15,12 @@ DerivedData/
 .swiftpm/
 .netrc
 
+# Maintainer-only scripts (contributors don't need these)
+scripts/
+
+# Documentation builds (generated, deploy manually, don't commit)
+docs-output/
+
 # Claude AI
+.claude/
 CLAUDE.md

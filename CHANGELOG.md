@@ -11,6 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.1.0] - 2026-04-24
+
+### Added
+
+- **`URL.readFromFile()`** — new Foundation extension to read file contents directly from a URL. Replaces the misplaced `String.readFromFile(fileURL:)` that was removed in this version.
+- **`abbreviated(locale:decimalPlaces:)`** — `decimalPlaces` parameter added to both `Double` and `Int`. Controls how many decimal digits appear in formatted output (default: `1`).
+- **`Int.inWords(locale:)`** now delegates to `Double.inWords(locale:)` — single implementation, consistent behaviour.
+
+### Changed
+
+- **`Int.abbreviated(locale:decimalPlaces:)`** delegates to `Double.abbreviated(locale:decimalPlaces:)` — eliminates duplicate logic and fixes the negative-number bug in the old Int implementation.
+- **`Double.abbreviated()`** uses `NumberFormatter` — trailing zeros suppressed by default (e.g. `1000` → `"1K"`, not `"1.0K"`).
+
+### Removed
+
+- **`String.readFromFile(fileURL:)`** — phantom API where `self` was never used. Replaced by `URL.readFromFile()`.
+
+---
+
 ## [3.0.0] - 2025-01-08
 
 ### 🎉 Major Release - Single Target Architecture & Comprehensive Documentation
@@ -299,7 +318,8 @@ import RKUtils        // All platforms
 - [Swift Package Index](https://swiftpackageindex.com/TheRakiburKhan/RKUtils)
 - [Report Issues](https://github.com/TheRakiburKhan/RKUtils/issues)
 
-[Unreleased]: https://github.com/TheRakiburKhan/RKUtils/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/TheRakiburKhan/RKUtils/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/TheRakiburKhan/RKUtils/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v3.0.0
 [2.1.1]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.1.1
 [2.1.0]: https://github.com/TheRakiburKhan/RKUtils/releases/tag/v2.1.0

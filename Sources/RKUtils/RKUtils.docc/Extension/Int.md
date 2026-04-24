@@ -238,7 +238,7 @@ Format integers with localization and abbreviations.
 
 - ``Int/toLocal(locale:)``
 - ``Int/percentage(minFraction:maxFraction:groupSize:)``
-- ``Int/abbreviated(locale:)``
+- ``Int/abbreviated(locale:decimalPlaces:)``
 - ``Int/intervalDescription(interval:suffix:groupSeparator:locale:)``
 
 ### Word Formatting
@@ -261,9 +261,9 @@ Convert numbers to time strings and components.
 
 - ``Int/timeString``
 - ``Int/secondsToMinutesSeconds``
-- ``Int/day(style:context:)``
-- ``Int/month(style:context:)``
-- ``Int/year(style:context:)``
+- ``Int/day(calendar:locale:style:context:)``
+- ``Int/month(calendar:locale:style:context:)``
+- ``Int/year(calendar:locale:style:context:)``
 
 ### Utility Operations
 
