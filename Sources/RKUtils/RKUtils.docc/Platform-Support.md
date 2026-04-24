@@ -10,15 +10,15 @@ RKUtils is designed to work across all Apple platforms with a unified API. Platf
 
 ### Minimum Versions
 
-| Platform | Minimum Version | Notes |
-|----------|----------------|-------|
-| **iOS** | 14.0 | Full UIKit support |
-| **macOS** | 11.0 (Big Sur) | Full AppKit support |
-| **tvOS** | 14.0 | Full UIKit support |
-| **watchOS** | 7.0 | Foundation only |
-| **visionOS** | 1.0 | Full UIKit support |
-| **Mac Catalyst** | 14.0 | Uses UIKit APIs |
-| **Linux** | N/A | Foundation only |
+| Platform         | Minimum Version | Notes               |
+| ---------------- | --------------- | ------------------- |
+| **iOS**          | 14.0            | Full UIKit support  |
+| **macOS**        | 11.0 (Big Sur)  | Full AppKit support |
+| **tvOS**         | 14.0            | Full UIKit support  |
+| **watchOS**      | 7.0             | Foundation only     |
+| **visionOS**     | 1.0             | Full UIKit support  |
+| **Mac Catalyst** | 14.0            | Uses UIKit APIs     |
+| **Linux**        | N/A             | Foundation only     |
 
 ### Development Requirements
 
@@ -31,17 +31,19 @@ RKUtils is designed to work across all Apple platforms with a unified API. Platf
 
 Available on **all platforms** including Linux:
 
-| Extension | iOS | macOS | tvOS | watchOS | visionOS | Linux |
-|-----------|-----|-------|------|---------|----------|-------|
-| String | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Date | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Int | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Double | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Bundle | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Data | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ProcessInfo | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ Limited |
+| Extension   | iOS | macOS | tvOS | watchOS | visionOS | Linux      |
+| ----------- | --- | ----- | ---- | ------- | -------- | ---------- |
+| String      | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| Date        | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| Int         | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| Double      | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| URL         | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| Bundle      | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| Data        | ✅  | ✅    | ✅   | ✅      | ✅       | ✅         |
+| ProcessInfo | ✅  | ✅    | ✅   | ✅      | ✅       | ⚠️ Limited |
 
 **Linux Limitations:**
+
 - No `CLLocationCoordinate2D` (requires CoreLocation)
 - No measurement formatters (distance, speed, temperature, etc.)
 - No `RelativeDateTimeFormatter` for `Date.relativeTime()`
@@ -51,18 +53,18 @@ Available on **all platforms** including Linux:
 
 Available on iOS, tvOS, visionOS, and Mac Catalyst:
 
-| Extension | iOS | macOS | tvOS | watchOS | visionOS | Catalyst |
-|-----------|-----|-------|------|---------|----------|----------|
-| UIView | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UIColor | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UITextField | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UITextView | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| UITableView | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UICollectionView | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UIDevice | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UIScreen | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| UIStoryboard | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| CGRect | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| Extension        | iOS | macOS | tvOS | watchOS | visionOS | Catalyst |
+| ---------------- | --- | ----- | ---- | ------- | -------- | -------- |
+| UIView           | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UIColor          | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UITextField      | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UITextView       | ✅  | ❌    | ❌   | ❌      | ✅       | ✅       |
+| UITableView      | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UICollectionView | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UIDevice         | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UIScreen         | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| UIStoryboard     | ✅  | ❌    | ✅   | ❌      | ✅       | ✅       |
+| CGRect           | ✅  | ✅    | ✅   | ❌      | ✅       | ✅       |
 
 **Note:** Mac Catalyst uses UIKit APIs, not AppKit.
 
@@ -70,22 +72,22 @@ Available on iOS, tvOS, visionOS, and Mac Catalyst:
 
 Available on **macOS only** (not Mac Catalyst):
 
-| Extension | iOS | macOS | tvOS | watchOS | visionOS | Catalyst |
-|-----------|-----|-------|------|---------|----------|----------|
-| NSView | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| NSColor | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| NSTextField | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| NSSecureTextField | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| NSTableView | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| NSCollectionView | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Extension         | iOS | macOS | tvOS | watchOS | visionOS | Catalyst |
+| ----------------- | --- | ----- | ---- | ------- | -------- | -------- |
+| NSView            | ❌  | ✅    | ❌   | ❌      | ❌       | ❌       |
+| NSColor           | ❌  | ✅    | ❌   | ❌      | ❌       | ❌       |
+| NSTextField       | ❌  | ✅    | ❌   | ❌      | ❌       | ❌       |
+| NSSecureTextField | ❌  | ✅    | ❌   | ❌      | ❌       | ❌       |
+| NSTableView       | ❌  | ✅    | ❌   | ❌      | ❌       | ❌       |
+| NSCollectionView  | ❌  | ✅    | ❌   | ❌      | ❌       | ❌       |
 
 ### SwiftUI Extensions
 
 Available on **all Apple platforms** (requires SwiftUI framework):
 
 | Extension | iOS | macOS | tvOS | watchOS | visionOS | Linux |
-|-----------|-----|-------|------|---------|----------|-------|
-| Color | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| --------- | --- | ----- | ---- | ------- | -------- | ----- |
+| Color     | ✅  | ✅    | ✅   | ✅      | ✅       | ❌    |
 
 ## Platform-Specific Features
 
@@ -114,14 +116,17 @@ let cell = tableView.dequeueReusableCell(MyCell.self, for: indexPath)
 ```
 
 **iOS-Specific:**
+
 - `UITextView` extensions (not available on tvOS)
 - Full touch and gesture support
 
 **tvOS-Specific:**
+
 - Focus engine considerations
 - Remote control support
 
 **visionOS-Specific:**
+
 - Spatial UI considerations
 - Same APIs as iOS
 
@@ -172,7 +177,7 @@ watchOS only has Foundation and SwiftUI support:
 import RKUtils
 
 // Foundation extensions work
-let formatted = 1234.abbreviated  // "1.2K"
+let formatted = 1234.abbreviated()()  // "1.2K"
 let valid = "test@example.com".isValidEmail  // true
 
 // SwiftUI Color works
@@ -191,7 +196,7 @@ import RKUtils
 
 // ✅ Available
 "test@example.com".isValidEmail
-1234.abbreviated
+1234.abbreviated()
 Date().toString()
 
 // ❌ Not available
@@ -384,7 +389,7 @@ import Foundation
 import RKUtils
 
 // Use Foundation everywhere
-let formatted = 1234.abbreviated
+let formatted = 1234.abbreviated()()
 
 // Platform-specific when needed
 #if canImport(UIKit)
@@ -459,6 +464,7 @@ let color = NSColor(hexString: "#FF5733")
 ```
 
 **Differences:**
+
 - `UIColor` → `NSColor`
 - `UIView` → `NSView`
 - `UITextField` → `NSTextField`

@@ -338,11 +338,11 @@ All public APIs remain **100% compatible**. The following code works identically
 
 ```swift
 // String extensions
-"test@example.com".isValidEmail
-"2024-01-15".toDate(format: "yyyy-MM-dd")
+"test@example.com".isValidEmail()
+"2024-01-15".toDate(stringFormat: "yyyy-MM-dd")
 
 // Number extensions
-1_234_567.abbreviated
+1_234_567.abbreviated()
 42.5.percentage()
 
 // Date extensions
@@ -407,8 +407,8 @@ import RKUtils
 
 func verifyRKUtils() {
     // Foundation
-    assert("test@example.com".isValidEmail == true)
-    assert(1000.abbreviated == "1K")
+    assert("test@example.com".isValidEmail() == true)
+    assert(1000.abbreviated() == "1K")
 
     // Platform-specific
     #if canImport(UIKit)
