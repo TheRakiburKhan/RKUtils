@@ -117,35 +117,7 @@ public extension String {
         return self.range(of: emailRegex, options: [.regularExpression, .caseInsensitive]) != nil
     }
 
-    /**
-     Reads the contents of a text file into a string.
 
-     - Parameter fileURL: The URL of the file to read. If `nil`, returns `nil`.
-
-     - Returns: The file contents as a UTF-8 encoded string, or `nil` if reading fails.
-
-     - Example:
-     ```swift
-     let fileURL = URL(fileURLWithPath: "/path/to/file.txt")
-     let content = "".readFromFile(fileURL: fileURL)
-     ```
-
-     - Note: Errors are printed to console with `debugPrint`.
-     */
-    func readFromFile(fileURL: URL?) -> String? {
-        if let url = fileURL {
-            //reading
-            do {
-                let text = try String(contentsOf: url, encoding: .utf8)
-                return text
-            } catch {
-                print("Error:: Cant read file \(String(describing: fileURL))")
-                debugPrint(error)
-            }
-        }
-
-        return nil
-    }
 
     /**
      Writes the string to a file at the specified URL.

@@ -73,9 +73,8 @@ Encode strings to Base64 format for secure transmission or storage.
 
 ### File Operations
 
-Read from and write to files on disk.
+Write string content to a file on disk.
 
-- ``String/readFromFile(fileURL:)``
 - ``String/writeToFile(saveLocation:)``
 
 ## See Also

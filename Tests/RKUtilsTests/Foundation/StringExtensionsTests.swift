@@ -169,48 +169,20 @@ struct StringExtensionsTests {
 
     // MARK: - File I/O Tests
 
-    @Test("Write and read file")
-    func writeAndReadFile() throws {
+    @Test("Write to file")
+    func writeToFile() throws {
         let testString = "Test content for file I/O"
         let tempDirectory = FileManager.default.temporaryDirectory
         let fileURL = tempDirectory.appendingPathComponent("test_file.txt")
 
-        // Clean up if file exists
         try? FileManager.default.removeItem(at: fileURL)
-
-        // Write to file
         testString.writeToFile(saveLocation: fileURL)
-
-        // Verify file exists
         #expect(FileManager.default.fileExists(atPath: fileURL.path))
-
-        // Read from file
-        let readString = "".readFromFile(fileURL: fileURL)
-        #expect(readString != nil)
-        #expect(readString == testString)
-
-        // Clean up
         try? FileManager.default.removeItem(at: fileURL)
-    }
-
-    @Test("Read from non-existent file returns nil")
-    func readFromNonExistentFile() {
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let nonExistentURL = tempDirectory.appendingPathComponent("non_existent_file.txt")
-
-        let readString = "".readFromFile(fileURL: nonExistentURL)
-        #expect(readString == nil)
     }
 
     @Test("Write to nil URL does not crash")
     func writeToNilURL() {
-        // Should not crash
         "test".writeToFile(saveLocation: nil)
-    }
-
-    @Test("Read from nil URL returns nil")
-    func readFromNilURL() {
-        let result = "".readFromFile(fileURL: nil)
-        #expect(result == nil)
     }
 }
