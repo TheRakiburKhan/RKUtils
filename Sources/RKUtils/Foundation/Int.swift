@@ -10,49 +10,6 @@ import Foundation
 
 public extension Int {
     /**
-     Creates a `NumberFormatter` with customizable style, grouping, and locale.
-     
-     - Parameters:
-        - numberStyle: The formatting style to apply (e.g., `.decimal`, `.spellOut`).
-        - groupSize: The digit group size (e.g., 3 for thousands).
-        - groupSeparator: Whether to use digit group separators (e.g., "1,000").
-        - locale: The locale to use (default is `.current`).
-     
-     - Returns: A configured `NumberFormatter`.
-    */
-    private func numberFormatter( numberStyle: NumberFormatter.Style? = nil, groupSize: Int? = nil, groupSeparator: Bool? = nil, locale: Locale = .current) -> NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 0
-        formatter.locale = locale
-        
-        if let numberStyle = numberStyle {
-            formatter.numberStyle = numberStyle
-        }
-        
-        if let groupSize = groupSize {
-            formatter.groupingSize = groupSize
-        }
-        
-        if let useGroupSeparator = groupSeparator {
-            formatter.usesGroupingSeparator = useGroupSeparator
-        }
-        
-        return formatter
-    }
-    
-    #if canImport(Darwin)
-    private func dateComponentsFormatter(units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> DateComponentsFormatter {
-        let formatter = DateComponentsFormatter()
-
-        formatter.allowedUnits = units
-        formatter.unitsStyle = style
-        formatter.formattingContext = context
-
-        return formatter
-    }
-    #endif
-    
-    /**
      Converts the Double to a percentage string (e.g., "25%").
      
      - Parameters:
@@ -63,9 +20,7 @@ public extension Int {
      - Returns: A percentage-formatted string.
      */
     func percentage(minFraction: Int? = nil, maxFraction: Int? = nil, groupSize: Int? = nil) -> String {
-        let value = Double(self) / 100.0
-        let formatter = numberFormatter(numberStyle: .percent, groupSize: groupSize)
-        return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.2f%%", value * 100)
+        Double(self).percentage(minFraction: minFraction, maxFraction: maxFraction, groupSize: groupSize)
     }
     
     /**
@@ -77,7 +32,7 @@ public extension Int {
      - Returns: A localized string representation of the number.
     */
     func toLocal(locale: Locale = .current) -> String {
-        let formatter = numberFormatter(numberStyle: .decimal, locale: locale)
+        let formatter = numberFormatter(locale: locale, numberStyle: .decimal)
         return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
     
@@ -95,7 +50,7 @@ public extension Int {
      - Returns: A formatted string representing the rounded number with optional suffix.
      */
     func intervalDescription(interval: Int, suffix: String = "+", groupSeparator: Bool = false, locale: Locale = .current) -> String {
-        let formatter = numberFormatter(numberStyle: .decimal, groupSeparator: groupSeparator, locale: locale)
+        let formatter = numberFormatter(locale: locale, numberStyle: .decimal, groupSeparator: groupSeparator)
         
         let absoluteInterval = abs(interval)
         let absSelf = abs(self)
@@ -132,7 +87,7 @@ public extension Int {
      - Returns: An array of strings representing each digit.
     */
     func digitNames(locale: Locale = .current, fallbackToEnglish: Bool = true) -> [String] {
-        let formatter = numberFormatter(numberStyle: .spellOut, locale: locale)
+        let formatter = numberFormatter(locale: locale, numberStyle: .spellOut)
         
         let digits: [String] = String(self).compactMap { char -> String? in
             guard let digit = Int(String(char)) else { return nil }
@@ -153,8 +108,7 @@ public extension Int {
      - Returns: A string with the number written in words.
      */
     func inWords(locale: Locale = .current) -> String {
-        let formatter = numberFormatter(numberStyle: .spellOut, locale: locale)
-        return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
+        Double(self).inWords(locale: locale)
     }
     
     /**
@@ -222,62 +176,101 @@ public extension Int {
     
     /**
      Returns a shortened, human-readable abbreviation of large numbers.
-     
+
      For example: `1_200` → `"1.2K"`, `1_500_000` → `"1.5M"`
-     
+
      - Parameters:
         - locale: The locale to use for decimal formatting.
-     
+        - decimalPlaces: Maximum number of decimal digits to show (default is `1`).
+
      - Returns: An abbreviated string with suffix (K, M, B).
     */
-    func abbreviated(locale: Locale = .current) -> String {
-        let num = Double(self)
-        let thousand = 1_000.0
-        let million = 1_000_000.0
-        let billion = 1_000_000_000.0
-        
-        let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 1
-        formatter.locale = locale
-        
-        switch num {
-            case 0..<thousand:
-                return "\(self)"
-            case thousand..<million:
-                return "\(formatter.string(from: NSNumber(value: num / thousand)) ?? "")K"
-            case million..<billion:
-                return "\(formatter.string(from: NSNumber(value: num / million)) ?? "")M"
-            default:
-                return "\(formatter.string(from: NSNumber(value: num / billion)) ?? "")B"
-        }
+    func abbreviated(locale: Locale = .current, decimalPlaces: Int = 1) -> String {
+        Double(self).abbreviated(locale: locale, decimalPlaces: decimalPlaces)
     }
 }
 
 #if canImport(Darwin)
 public extension Int {
-    func day(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    /**
+     Converts seconds into a readable time format (e.g., "1h 3m").
+     
+     - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
+        - units: Allowed time components.
+        - style: Output format style.
+        - context: Formatting context.
+     
+     - Returns: A time-formatted string.
+     */
+    func secondsToTime(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+        Double(self).secondsToTime(calendar: calendar, locale: locale, units: units, style: style, context: context)
+    }
+    
+    /**
+     Converts a number to a day count string.
+     
+     - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
+        - style: Units style.
+        - context: Formatting context.
+     
+     - Returns: A day-formatted string.
+     */
+    func day(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(day: self)
-        let formatter = dateComponentsFormatter(units: [.day], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent, units: [.day], style: style, context: context)
 
         return formatter.string(from: components) ?? self.toLocal()
     }
-
-    func month(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    
+    /**
+     Converts a number to a month count string.
+     
+     - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
+        - style: Units style.
+        - context: Formatting context.
+     
+     - Returns: A month-formatted string.
+     */
+    func month(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(month: self)
-        let formatter = dateComponentsFormatter(units: [.month], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent, units: [.month], style: style, context: context)
 
         return formatter.string(from: components) ?? self.toLocal()
     }
-
-    func year(style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    
+    /**
+     Converts a number to a year count string.
+     
+     - Parameters:
+        - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
+        - style: Units style.
+        - context: Formatting context.
+     
+     - Returns: A year-formatted string.
+     */
+    func year(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(year: self)
-        let formatter = dateComponentsFormatter(units: [.year], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent, units: [.year], style: style, context: context)
 
         return formatter.string(from: components) ?? self.toLocal()
     }
 }
 #else
 public extension Int {
+    // Linux fallback - basic formatting (style/context parameters not available on Linux)
+    // Format placeholders: %h (hours), %m (minutes), %s (seconds)
+    // Use %02d style for zero-padding: e.g., "%h:%02m:%02s" -> "1:05:09"
+    func secondsToTime(format: String? = nil) -> String {
+        Double(self).secondsToTime(format: format)
+    }
+    
     // Linux fallback - basic formatting (style/context parameters not available on Linux)
     func day() -> String {
         return "\(self) day\(self == 1 ? "" : "s")"
@@ -354,4 +347,38 @@ public extension Int {
     func toPositiveSuffix(interval: Int, suffix: String = "+", groupSeparator: Bool = false, locale: Locale = .current) -> String {
        return intervalDescription(interval: interval, suffix: suffix, groupSeparator: groupSeparator, locale: locale)
     }
+}
+
+// MARK: - Private Helpers
+private extension Int {
+    func numberFormatter(locale: Locale = .current, numberStyle: NumberFormatter.Style? = nil, groupSize: Int? = nil, groupSeparator: Bool? = nil) -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        
+        if let style = numberStyle {
+            formatter.numberStyle = style
+        }
+        
+        if let group = groupSeparator {
+            formatter.usesGroupingSeparator = group
+        }
+        
+        if let size = groupSize {
+            formatter.groupingSize = size
+        }
+        
+        return formatter
+    }
+    
+#if canImport(Darwin)
+    func dateComponentsFormatter(calendar: Calendar, locale: Locale, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
+        let formatter = DateComponentsFormatter()
+        formatter.calendar = calendar
+        formatter.calendar?.locale = locale
+        formatter.allowedUnits = units
+        formatter.unitsStyle = style
+        formatter.formattingContext = context
+        return formatter
+    }
+#endif
 }
