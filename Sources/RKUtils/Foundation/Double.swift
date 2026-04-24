@@ -214,14 +214,15 @@ public extension Double {
 
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - units: Allowed time components.
         - style: Output format style.
         - context: Formatting context.
 
      - Returns: A time-formatted string.
      */
-    func secondsToTime(calendar: Calendar = .autoupdatingCurrent, units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
-        let formatter = dateComponentsFormatter(calendar: calendar, units: units, style: style, context: context)
+    func secondsToTime(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, units: NSCalendar.Unit = [.hour, .minute, .second], style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: units, style: style, context: context)
 
         return formatter.string(from: self) ?? "\(self)s"
     }
@@ -231,14 +232,15 @@ public extension Double {
 
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
 
      - Returns: A day-formatted string.
      */
-    func day(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    func day(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(day: Int(self))
-        let formatter = dateComponentsFormatter(calendar: calendar, units: [.day], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: [.day], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
 
@@ -247,14 +249,15 @@ public extension Double {
 
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
 
      - Returns: A month-formatted string.
      */
-    func month(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    func month(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(month: Int(self))
-        let formatter = dateComponentsFormatter(calendar: calendar, units: [.month], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: [.month], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
 
@@ -263,14 +266,15 @@ public extension Double {
 
      - Parameters:
         - calendar: Calendar to be used. Default is .autoupdatingCurrent
+        - locale: Locale for language and region formatting. Default is .autoupdatingCurrent
         - style: Units style.
         - context: Formatting context.
 
      - Returns: A year-formatted string.
      */
-    func year(calendar: Calendar = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
+    func year(calendar: Calendar = .autoupdatingCurrent, locale: Locale = .autoupdatingCurrent, style: DateComponentsFormatter.UnitsStyle = .abbreviated, context: Formatter.Context = .listItem) -> String {
         let components = DateComponents(year: Int(self))
-        let formatter = dateComponentsFormatter(calendar: calendar, units: [.year], style: style, context: context)
+        let formatter = dateComponentsFormatter(calendar: calendar, locale: locale, units: [.year], style: style, context: context)
         return formatter.string(from: components) ?? toLocal()
     }
 }
@@ -457,9 +461,10 @@ private extension Double {
     }
     
     #if canImport(Darwin)
-    func dateComponentsFormatter(calendar: Calendar, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
+    func dateComponentsFormatter(calendar: Calendar, locale: Locale, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
         formatter.calendar = calendar
+        formatter.calendar?.locale = locale
         formatter.allowedUnits = units
         formatter.unitsStyle = style
         formatter.formattingContext = context
