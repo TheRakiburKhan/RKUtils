@@ -462,11 +462,15 @@ private extension Double {
 #if canImport(Darwin)
     func dateComponentsFormatter(calendar: Calendar, locale: Locale, units: NSCalendar.Unit, style: DateComponentsFormatter.UnitsStyle, context: Formatter.Context) -> DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
-        formatter.calendar = calendar
-        formatter.calendar?.locale = locale
+        
+        var cal = calendar
+        cal.locale = locale
+        
+        formatter.calendar = cal
         formatter.allowedUnits = units
         formatter.unitsStyle = style
         formatter.formattingContext = context
+        
         return formatter
     }
     
