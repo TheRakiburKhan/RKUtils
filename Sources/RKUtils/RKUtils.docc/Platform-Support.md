@@ -177,8 +177,8 @@ watchOS only has Foundation and SwiftUI support:
 import RKUtils
 
 // Foundation extensions work
-let formatted = 1234.abbreviated()()  // "1.2K"
-let valid = "test@example.com".isValidEmail  // true
+let formatted = 1234.abbreviated()  // "1.2K"
+let valid = "test@example.com".isValidEmail()  // true
 
 // SwiftUI Color works
 Color(hexString: "#FF5733")
@@ -195,7 +195,7 @@ Linux support is limited to Foundation types:
 import RKUtils
 
 // ✅ Available
-"test@example.com".isValidEmail
+"test@example.com".isValidEmail()
 1234.abbreviated()
 Date().toString()
 

@@ -26,7 +26,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "3.0.0")
+    .package(url: "https://github.com/TheRakiburKhan/RKUtils.git", from: "3.1.0")
 ]
 ```
 
@@ -34,7 +34,7 @@ dependencies: [
 
 1. **File > Add Package Dependencies...**
 2. Enter: `https://github.com/TheRakiburKhan/RKUtils.git`
-3. Select version **3.0.0+** and add to your target
+3. Select version **3.1.0+** and add to your target
 
 ### Target Configuration
 
